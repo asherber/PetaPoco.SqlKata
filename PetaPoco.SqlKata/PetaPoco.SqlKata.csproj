@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <AssemblyName>PetaPoco.SqlKata</AssemblyName>
+    <RootNamespace>PetaPoco.SqlKata</RootNamespace>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Authors>Aaron Sherber</Authors>
+    <Copyright>2018</Copyright>
+    <PackageTags>petapoco sqlkata sql query builder</PackageTags>
+    <Company />
+    <Description>Extension methods for using SqlKata to generate SQL queries for PetaPoco.</Description>
+    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/asherber/PetaPoco.SqlKata</PackageProjectUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup>
