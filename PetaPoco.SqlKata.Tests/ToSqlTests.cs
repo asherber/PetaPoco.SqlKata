@@ -6,7 +6,7 @@ using FluentAssertions;
 
 namespace PetaPoco.SqlKata.Tests
 {
-    public class Tests
+    public class ToSqlTests
     {
         [Fact]
         public void Simple_Select()
@@ -79,6 +79,15 @@ namespace PetaPoco.SqlKata.Tests
                 .Where("Fruit", "apple")
                 .Where("Vegetable", ">", "carrot");
             var expected = new Sql("SELECT * FROM [Foo] WHERE [Fruit] = @0 AND [Vegetable] > @1", "apple", "carrot");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Select_Null()
+        {
+            var input = new Query().From("Foo").SelectRaw("NULL");
+            var expected = new Sql("SELECT NULL FROM [Foo]");
             var output = input.ToSql();
             output.Should().BeEquivalentTo(expected);
         }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using SqlKata;
 using SqlKata.Compilers;
 using PetaPoco;
+using PetaPoco.Core;
 
 namespace PetaPoco.SqlKata
 {
@@ -48,6 +49,33 @@ namespace PetaPoco.SqlKata
             var ppSql = Helper.ReplaceAll(compiled.RawSql, "?", x => "@" + x);
 
             return new Sql(ppSql, compiled.Bindings.ToArray());
+        }
+
+        /// <summary>
+        /// Sets the table name for the <seealso cref="Query"/> based on the <seealso cref="PocoData"/> for the given type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static Query ForType<T>(this Query query)
+        {
+            var tableInfo = new ConventionMapper().GetTableInfo(typeof(T));
+            return query.From(tableInfo.TableName);
+        }
+
+        /// <summary>
+        /// Generates a SELECT query based on the <seealso cref="PocoData"/> for the given type.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static Query GenerateSelect<T>(this Query query)
+        {
+            var pd = PocoData.ForType(typeof(T), new ConventionMapper());
+            query = query.From(pd.TableInfo.TableName);
+
+            query = pd.Columns.Any() ? query.Select(pd.QueryColumns) : query.SelectRaw("NULL");
+            return query;
         }
     }
 }

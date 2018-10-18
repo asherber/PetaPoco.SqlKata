@@ -6,10 +6,12 @@
 
 ## Usage
 
+### Basic
+
 ```csharp
 using (var db = new PetaPoco.Database(...))
 {
-    // Build a SqlKata query
+    // Build any SqlKata query
     var query = new Query("MyTable")
         .Where("Foo", "bar");
     
@@ -19,11 +21,32 @@ using (var db = new PetaPoco.Database(...))
 
 ```
 
-Note that while PetaPoco has an `AutoGenerateSelect` feature that lets you omit the `SELECT` part of a query if your classes are set up correctly, SqlKata requires a table name in order to generate a query. If you try to use a `Query` without a table name, SqlKata will throw an `InvalidOperationException` when you call `ToSql()`.
+Note that while PetaPoco has an `EnableAutoSelect` feature that lets you omit the `SELECT` part of a query if your classes are set up correctly, SqlKata requires a table name in order to generate a query. If you try to use a `Query` without a table name, SqlKata will throw an `InvalidOperationException` when you call `ToSql()`.
+
+### Generate from POCO
+
+Since part of the benefit of PetaPoco is that it understands information embedded in a POCO, this library also has two extension methods to help do the same thing, letting you avoid retyping table and column names.
+
+```csharp
+public class MyClass
+{
+    property int ID { get; set; }
+    [Column("NAME_FIELD")]
+    property string Name { get; set; }
+}
+
+// This is equivalent to new Query("MyClass")
+// If the class has a TableName property, that will be used instead.
+var query = new Query().ForType<MyClass>();
+
+// SELECT [ID], [NAME_FIELD] FROM [MyClass]
+var query = new Query().GenerateSelect<MyClass>();  
+
+```
 
 ### Compilers
 
-Transforming a SqlKata `Query` into a SQL string requires a compiler. SqlKata comes with compilers for SQL Server, Postgres, MySql, and Firebird. For many simple queries, the generated SQL looks the same regardless of which compiler you use, but for certain queries the compiler will produce SQL tailored for that specific database.
+Transforming a SqlKata `Query` into a SQL string requires a compiler. SqlKata comes with compilers for SQL Server, Postgres, MySql, and Firebird. For many simple queries, the generated SQL looks the same regardless of which compiler you use, but for certain queries the compiler will produce SQL tailored for that specific database. The compilers also know which characters to use to escape identifiers.
 
 By default, this library uses the SQL Server compiler. If you want to use a different compiler, there are a couple of different ways you can do so.
 
