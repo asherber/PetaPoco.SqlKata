@@ -17,6 +17,41 @@ namespace PetaPoco.SqlKata.Tests
             output.Should().BeEquivalentTo(expected);
         }
 
+        [Theory]
+        [MemberData(nameof(Compilers))]
+        public void Different_Compilers(CompilerType type, string table)
+        {
+            var input = new Query("Foo");
+            var expected = new Sql($"SELECT * FROM {table}");
+            var output = input.ToSql(type);
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Theory]
+        [MemberData(nameof(Compilers))]
+        public void Different_Default_Compilers(CompilerType type, string table)
+        {
+            try
+            {
+                SqlKataExtensions.DefaultCompiler = type;
+                var input = new Query("Foo");
+                var expected = new Sql($"SELECT * FROM {table}");
+                var output = input.ToSql();
+                output.Should().BeEquivalentTo(expected);
+            }
+            finally
+            {
+                SqlKataExtensions.DefaultCompiler = CompilerType.SqlServer;
+            }
+        }
+
+        public static IEnumerable<object[]> Compilers => new[]
+        {
+            new object[] { CompilerType.SqlServer, "[Foo]" },
+            new object[] { CompilerType.MySql, "`Foo`" },
+            new object[] { CompilerType.Postgres, "\"Foo\"" },
+        };
+
         [Fact]
         public void Specify_Columns()
         {
@@ -65,6 +100,39 @@ namespace PetaPoco.SqlKata.Tests
             var input = new Query().Where("Fruit", "banana");
             Action act = () => input.ToSql();
             act.Should().Throw<InvalidOperationException>();
+        }
+
+        [Fact]
+        public void Update()
+        {
+            var input = new Query("Foo")
+                .WhereNull("Fruit")
+                .AsUpdate(new { Fruit = "apple" });
+            var expected = new Sql("UPDATE [Foo] SET [Fruit] = @0 WHERE [Fruit] IS NULL", "apple");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Delete()
+        {
+            var input = new Query()
+                .From("Foo")
+                .WhereNotNull("Fruit")
+                .AsDelete();
+            var expected = new Sql("DELETE FROM [Foo] WHERE [Fruit] IS NOT NULL");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Insert()
+        {
+            var input = new Query("Foo")
+                .AsInsert(new { Fruit = "apple", Vegetable = "carrot" });
+            var expected = new Sql("INSERT INTO [Foo] ([Fruit], [Vegetable]) VALUES (@0, @1)", "apple", "carrot");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
         }
     }
 }
