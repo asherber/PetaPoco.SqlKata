@@ -14,13 +14,15 @@ namespace PetaPoco.SqlKata
 
     public static class SqlKataExtensions
     {
-        private static Dictionary<CompilerType, Lazy<Compiler>> _compilers = new Dictionary<CompilerType, Lazy<Compiler>>()
+        private static readonly Dictionary<CompilerType, Lazy<Compiler>> _compilers = new Dictionary<CompilerType, Lazy<Compiler>>()
         {
             {  CompilerType.SqlServer, new Lazy<Compiler>(() => new SqlServerCompiler()) },
             {  CompilerType.MySql, new Lazy<Compiler>(() => new MySqlCompiler()) },
             {  CompilerType.Postgres, new Lazy<Compiler>(() => new PostgresCompiler()) },
             {  CompilerType.Firebird, new Lazy<Compiler>(() => new FirebirdCompiler()) },
         };
+
+        private static readonly IMapper _mapper = new ConventionMapper();
 
         /// <summary>
         /// Indicates the compiler that gets used when one is not specified.
@@ -57,7 +59,7 @@ namespace PetaPoco.SqlKata
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static Query ForType<T>(this Query query) => query.ForType<T>(new ConventionMapper());
+        public static Query ForType<T>(this Query query) => query.ForType<T>(_mapper);
 
         /// <summary>
         /// Sets the table name for the <seealso cref="Query"/> based on the <seealso cref="PocoData"/> for the given type and mapper.
@@ -78,7 +80,7 @@ namespace PetaPoco.SqlKata
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static Query GenerateSelect<T>(this Query query) => query.GenerateSelect<T>(new ConventionMapper());
+        public static Query GenerateSelect<T>(this Query query) => query.GenerateSelect<T>(_mapper);
 
         /// <summary>
         /// Generates a SELECT query based on the <seealso cref="PocoData"/> for the given type and mapper.
