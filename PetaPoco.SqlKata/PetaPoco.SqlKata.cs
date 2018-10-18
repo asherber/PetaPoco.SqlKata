@@ -47,7 +47,7 @@ namespace PetaPoco.SqlKata
             var compiled = compiler.Compile(query);
             var ppSql = Helper.ReplaceAll(compiled.RawSql, "?", x => "@" + x);
 
-            return new Sql(ppSql, compiled.Bindings);
+            return new Sql(ppSql, compiled.Bindings.ToArray());
         }
     }
 }
