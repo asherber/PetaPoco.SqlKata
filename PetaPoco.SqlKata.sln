@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetaPoco.SqlKata", "PetaPoc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetaPoco.SqlKata.Tests", "PetaPoco.SqlKata.Tests\PetaPoco.SqlKata.Tests.csproj", "{1BEE3731-A1F9-4099-A09B-109DC9248625}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{447D13E6-0522-4666-B601-F8B07249513B}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
