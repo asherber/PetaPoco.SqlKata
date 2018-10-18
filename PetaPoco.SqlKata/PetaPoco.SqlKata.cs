@@ -52,26 +52,44 @@ namespace PetaPoco.SqlKata
         }
 
         /// <summary>
-        /// Sets the table name for the <seealso cref="Query"/> based on the <seealso cref="PocoData"/> for the given type.
+        /// Sets the table name for the <seealso cref="Query"/> based on the <seealso cref="PocoData"/> for the given type, using a default mapper.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static Query ForType<T>(this Query query)
+        public static Query ForType<T>(this Query query) => query.ForType<T>(new ConventionMapper());
+
+        /// <summary>
+        /// Sets the table name for the <seealso cref="Query"/> based on the <seealso cref="PocoData"/> for the given type and mapper.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <param name="mapper"></param>
+        /// <returns></returns>
+        public static Query ForType<T>(this Query query, IMapper mapper)
         {
-            var tableInfo = new ConventionMapper().GetTableInfo(typeof(T));
+            var tableInfo = mapper.GetTableInfo(typeof(T));
             return query.From(tableInfo.TableName);
         }
 
         /// <summary>
-        /// Generates a SELECT query based on the <seealso cref="PocoData"/> for the given type.
+        /// Generates a SELECT query based on the <seealso cref="PocoData"/> for the given type, using a default mapper. 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static Query GenerateSelect<T>(this Query query)
+        public static Query GenerateSelect<T>(this Query query) => query.GenerateSelect<T>(new ConventionMapper());
+
+        /// <summary>
+        /// Generates a SELECT query based on the <seealso cref="PocoData"/> for the given type and mapper.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <param name="mapper"></param>
+        /// <returns></returns>
+        public static Query GenerateSelect<T>(this Query query, IMapper mapper)
         {
-            var pd = PocoData.ForType(typeof(T), new ConventionMapper());
+            var pd = PocoData.ForType(typeof(T), mapper);
             query = query.From(pd.TableInfo.TableName);
 
             query = pd.Columns.Any() ? query.Select(pd.QueryColumns) : query.SelectRaw("NULL");

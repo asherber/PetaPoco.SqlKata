@@ -44,6 +44,8 @@ var query = new Query().GenerateSelect<MyClass>();
 
 ```
 
+Both of these methods also have overloads that can take an `IMapper` instance, if you don't want to use a default `ConventionMapper`.
+
 ### Compilers
 
 Transforming a SqlKata `Query` into a SQL string requires a compiler. SqlKata comes with compilers for SQL Server, Postgres, MySql, and Firebird. For many simple queries, the generated SQL looks the same regardless of which compiler you use, but for certain queries the compiler will produce SQL tailored for that specific database. The compilers also know which characters to use to escape identifiers.
