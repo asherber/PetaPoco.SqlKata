@@ -12,7 +12,7 @@ namespace PetaPoco.SqlKata.Tests
     public class AutoGenerateTests
     {
         [Fact]
-        public void ForType_Simple_Class()
+        public void ForType_T_Simple_Class()
         {
             var q = new Query().ForType<MyClass>();
             var expected = new Query("MyClass");
@@ -20,7 +20,7 @@ namespace PetaPoco.SqlKata.Tests
         }
 
         [Fact]
-        public void ForType_With_TableName()
+        public void ForType_T_With_TableName()
         {
             var q = new Query().ForType<MyClassWithName>();
             var expected = new Query("TableName");
@@ -28,7 +28,41 @@ namespace PetaPoco.SqlKata.Tests
         }
 
         [Fact]
-        public void Generate_SimpleClass()
+        public void ForType_Simple_Class()
+        {
+            var q = new Query().ForType(typeof(MyClass));
+            var expected = new Query("MyClass");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ForType_With_TableName()
+        {
+            var q = new Query().ForType(typeof(MyClassWithName));
+            var expected = new Query("TableName");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ForObject_Simple_Class()
+        {
+            var obj = new MyClass();
+            var q = new Query().ForObject(obj);
+            var expected = new Query("MyClass");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void ForObject_With_TableName()
+        {
+            var obj = new MyClassWithName();
+            var q = new Query().ForObject(obj);
+            var expected = new Query("TableName");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Generate_T_SimpleClass()
         {
             var q = new Query().GenerateSelect<MyClass>();
             var expected = new Query("MyClass").Select("ID", "Name");
@@ -36,7 +70,7 @@ namespace PetaPoco.SqlKata.Tests
         }
 
         [Fact]
-        public void Generate_NoFields()
+        public void Generate_T_NoFields()
         {
             var q = new Query().GenerateSelect<NoFields>();
             var expected = new Query("NoFields").SelectRaw("NULL");
@@ -44,7 +78,7 @@ namespace PetaPoco.SqlKata.Tests
         }
 
         [Fact]
-        public void Generate_With_TableName()
+        public void Generate_T_With_TableName()
         {
             var q = new Query().GenerateSelect<MyClassWithName>();
             var expected = new Query("TableName").Select("ID", "Name");
@@ -52,9 +86,77 @@ namespace PetaPoco.SqlKata.Tests
         }
 
         [Fact]
-        public void Generate_With_ColumnNames()
+        public void Generate_T_With_ColumnNames()
         {
             var q = new Query().GenerateSelect<MyClassWithColumnNames>();
+            var expected = new Query("MyClassWithColumnNames").Select("ID_FIELD", "NAME_FIELD");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Generate_SimpleClass()
+        {
+            var q = new Query().GenerateSelect(typeof(MyClass));
+            var expected = new Query("MyClass").Select("ID", "Name");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Generate_NoFields()
+        {
+            var q = new Query().GenerateSelect(typeof(NoFields));
+            var expected = new Query("NoFields").SelectRaw("NULL");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Generate_With_TableName()
+        {
+            var q = new Query().GenerateSelect(typeof(MyClassWithName));
+            var expected = new Query("TableName").Select("ID", "Name");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Generate_With_ColumnNames()
+        {
+            var q = new Query().GenerateSelect(typeof(MyClassWithColumnNames));
+            var expected = new Query("MyClassWithColumnNames").Select("ID_FIELD", "NAME_FIELD");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Generate_SimpleObject()
+        {
+            var obj = new MyClass();
+            var q = new Query().GenerateSelect(obj);
+            var expected = new Query("MyClass").Select("ID", "Name");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Generate_NoFields_Object()
+        {
+            var obj = new NoFields();
+            var q = new Query().GenerateSelect(obj);
+            var expected = new Query("NoFields").SelectRaw("NULL");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Generate_With_TableName_Object()
+        {
+            var obj = new MyClassWithName();
+            var q = new Query().GenerateSelect(obj);
+            var expected = new Query("TableName").Select("ID", "Name");
+            q.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Generate_With_ColumnNames_Object()
+        {
+            var obj = new MyClassWithColumnNames();
+            var q = new Query().GenerateSelect(obj);
             var expected = new Query("MyClassWithColumnNames").Select("ID_FIELD", "NAME_FIELD");
             q.Should().BeEquivalentTo(expected);
         }

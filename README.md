@@ -35,16 +35,20 @@ public class MyClass
     property string Name { get; set; }
 }
 
-// This is equivalent to new Query("MyClass")
+// These are all equivalent to new Query("MyClass")
 // If the class has a TableName property, that will be used instead.
 var query = new Query().ForType<MyClass>();
+var query = new Query().ForType(typeof(MyClass));
+var query = new Query().ForObject(new MyClass());
 
 // SELECT [ID], [NAME_FIELD] FROM [MyClass]
 var query = new Query().GenerateSelect<MyClass>();  
+var query = new Query().GenerateSelect(typeof(MyClass));
+var query = new Query().GenerateSelect(new MyClass());
 
 ```
 
-Both of these methods also have overloads that can take an `IMapper` instance, if you don't want to use a default `ConventionMapper`.
+These methods all use a default `ConventionMapper`. They also have overloads that let you pass in your own `IMapper` instance. 
 
 ### Compilers
 
