@@ -6,17 +6,20 @@ using System.Threading.Tasks;
 using Xunit;
 using FluentAssertions;
 using SqlKata;
+using FluentAssertions.Equivalency;
 
 namespace PetaPoco.SqlKata.Tests
 {
     public class AutoGenerateTests
     {
+        private static void Compare(Query output, Query expected) => output.Should().BeEquivalentTo(expected, o => o.RespectingRuntimeTypes());
+
         [Fact]
         public void ForType_T_Simple_Class()
         {
             var q = new Query().ForType<MyClass>();
             var expected = new Query("MyClass");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -24,7 +27,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().ForType<MyClassWithName>();
             var expected = new Query("TableName");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -32,7 +35,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().ForType(typeof(MyClass));
             var expected = new Query("MyClass");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -40,7 +43,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().ForType(typeof(MyClassWithName));
             var expected = new Query("TableName");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -49,7 +52,7 @@ namespace PetaPoco.SqlKata.Tests
             var obj = new MyClass();
             var q = new Query().ForObject(obj);
             var expected = new Query("MyClass");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -58,7 +61,7 @@ namespace PetaPoco.SqlKata.Tests
             var obj = new MyClassWithName();
             var q = new Query().ForObject(obj);
             var expected = new Query("TableName");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -66,7 +69,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().GenerateSelect<MyClass>();
             var expected = new Query("MyClass").Select("ID", "Name");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -74,7 +77,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().GenerateSelect<NoFields>();
             var expected = new Query("NoFields").SelectRaw("NULL");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -82,7 +85,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().GenerateSelect<MyClassWithName>();
             var expected = new Query("TableName").Select("ID", "Name");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -90,7 +93,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().GenerateSelect<MyClassWithColumnNames>();
             var expected = new Query("MyClassWithColumnNames").Select("ID_FIELD", "NAME_FIELD");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -98,7 +101,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().GenerateSelect(typeof(MyClass));
             var expected = new Query("MyClass").Select("ID", "Name");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -106,7 +109,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().GenerateSelect(typeof(NoFields));
             var expected = new Query("NoFields").SelectRaw("NULL");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -114,7 +117,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().GenerateSelect(typeof(MyClassWithName));
             var expected = new Query("TableName").Select("ID", "Name");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -122,7 +125,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             var q = new Query().GenerateSelect(typeof(MyClassWithColumnNames));
             var expected = new Query("MyClassWithColumnNames").Select("ID_FIELD", "NAME_FIELD");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -131,7 +134,7 @@ namespace PetaPoco.SqlKata.Tests
             var obj = new MyClass();
             var q = new Query().GenerateSelect(obj);
             var expected = new Query("MyClass").Select("ID", "Name");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -140,7 +143,7 @@ namespace PetaPoco.SqlKata.Tests
             var obj = new NoFields();
             var q = new Query().GenerateSelect(obj);
             var expected = new Query("NoFields").SelectRaw("NULL");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -149,7 +152,7 @@ namespace PetaPoco.SqlKata.Tests
             var obj = new MyClassWithName();
             var q = new Query().GenerateSelect(obj);
             var expected = new Query("TableName").Select("ID", "Name");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
 
         [Fact]
@@ -158,7 +161,7 @@ namespace PetaPoco.SqlKata.Tests
             var obj = new MyClassWithColumnNames();
             var q = new Query().GenerateSelect(obj);
             var expected = new Query("MyClassWithColumnNames").Select("ID_FIELD", "NAME_FIELD");
-            q.Should().BeEquivalentTo(expected);
+            Compare(q, expected);
         }
     }
 
