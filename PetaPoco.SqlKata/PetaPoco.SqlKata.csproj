@@ -10,8 +10,9 @@
     <PackageTags>petapoco sqlkata sql query builder</PackageTags>
     <Company />
     <Description>Extension methods for using SqlKata to generate SQL queries for PetaPoco.</Description>
-    <PackageLicenseUrl>https://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/asherber/PetaPoco.SqlKata</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/asherber/PetaPoco.SqlKata</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
   </PropertyGroup>
 
