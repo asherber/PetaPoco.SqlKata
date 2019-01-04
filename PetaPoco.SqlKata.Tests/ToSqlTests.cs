@@ -50,6 +50,8 @@ namespace PetaPoco.SqlKata.Tests
             new object[] { CompilerType.SqlServer, "[Foo]" },
             new object[] { CompilerType.MySql, "`Foo`" },
             new object[] { CompilerType.Postgres, "\"Foo\"" },
+            new object[] { CompilerType.Firebird, "\"FOO\"" },
+            new object[] { CompilerType.SQLite, "\"Foo\"" },
         };
 
         [Fact]

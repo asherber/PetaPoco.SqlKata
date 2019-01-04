@@ -26,7 +26,7 @@ using PetaPoco.Core;
 
 namespace PetaPoco.SqlKata
 {
-    public enum CompilerType { SqlServer, MySql, Postgres, Firebird };
+    public enum CompilerType { SqlServer, MySql, Postgres, Firebird, SQLite };
 
     public static class SqlKataExtensions
     {
@@ -36,6 +36,7 @@ namespace PetaPoco.SqlKata
             {  CompilerType.MySql, new Lazy<Compiler>(() => new MySqlCompiler()) },
             {  CompilerType.Postgres, new Lazy<Compiler>(() => new PostgresCompiler()) },
             {  CompilerType.Firebird, new Lazy<Compiler>(() => new FirebirdCompiler()) },
+            {  CompilerType.SQLite, new Lazy<Compiler>(() => new SqliteCompiler()) },
         };
 
         private static readonly IMapper _mapper = new ConventionMapper();

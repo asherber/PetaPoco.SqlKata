@@ -14,6 +14,7 @@
     <RepositoryUrl>https://github.com/asherber/PetaPoco.SqlKata</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
+    <PackageReleaseNotes>Updated SqlKata to 1.1.5, which adds SQLite compiler.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +23,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="PetaPoco.Compiled" Version="[6.0.316,7)" />
-    <PackageReference Include="SqlKata" Version="[1.0.4,2)" />
+    <PackageReference Include="SqlKata" Version="[1.1.5,2)" />
   </ItemGroup>
 
 </Project>
