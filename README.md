@@ -52,7 +52,7 @@ These methods all use a default `ConventionMapper`. They also have overloads tha
 
 ### Compilers
 
-Transforming a SqlKata `Query` into a SQL string requires a compiler. SqlKata comes with compilers for SQL Server, Postgres, MySql, and Firebird. For many simple queries, the generated SQL looks the same regardless of which compiler you use, but for certain queries the compiler will produce SQL tailored for that specific database. The compilers also know which characters to use to escape identifiers.
+Transforming a SqlKata `Query` into a SQL string requires a compiler. SqlKata comes with compilers for SQL Server, Postgres, MySql, Firebird, and SQLite. For many simple queries, the generated SQL looks the same regardless of which compiler you use, but for certain queries the compiler will produce SQL tailored for that specific database. The compilers also know which characters to use to escape identifiers.
 
 By default, this library uses the SQL Server compiler. If you want to use a different compiler, there are a couple of different ways you can do so.
 
