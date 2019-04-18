@@ -48,7 +48,7 @@ var query = new Query().GenerateSelect(new MyClass());
 
 ```
 
-These methods all use a default `ConventionMapper`. They also have overloads that let you pass in your own `IMapper` instance. 
+These methods all use a default `ConventionMapper`. They also have overloads that let you pass in your own `IMapper` instance, or you can assign one to `SqlKataExtensions.DefaultMapper`.
 
 ### Compilers
 

@@ -163,8 +163,47 @@ namespace PetaPoco.SqlKata.Tests
             var expected = new Query("MyClassWithColumnNames").Select("ID_FIELD", "NAME_FIELD");
             Compare(q, expected);
         }
-    }
 
+        [Theory]
+        [MemberData(nameof(Mappers))]
+        public void Different_Mappers(IMapper mapper, string tableName, params string[] fieldNames)
+        {
+            try
+            {
+                var q = new Query().GenerateSelect<MyOtherClass>(mapper);
+                var expected = new Query(tableName).Select(fieldNames);
+                Compare(q, expected);
+            }
+            finally
+            {
+                PetaPoco.Mappers.RevokeAll();  // To flush the PocoData cache
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(Mappers))]
+        public void Different_Default_Mappers(IMapper mapper, string tableName, params string[] fieldNames)
+        {
+            try
+            {
+                SqlKataExtensions.DefaultMapper = mapper;
+                var q = new Query().GenerateSelect<MyOtherClass>();
+                var expected = new Query(tableName).Select(fieldNames);
+                Compare(q, expected);
+            }
+            finally
+            {
+                SqlKataExtensions.DefaultMapper = new ConventionMapper();
+                PetaPoco.Mappers.RevokeAll();
+            }
+        }
+
+        public static IEnumerable<object[]> Mappers => new[]
+        {
+            new object[] { new UnderscoreMapper(), "my_other_class", "other_id", "other_name" },
+            new object[] { new ConventionMapper(), "MyOtherClass", "OtherID", "OtherName" },
+        };
+    }
 
 
 
@@ -192,5 +231,20 @@ namespace PetaPoco.SqlKata.Tests
         public int ID { get; set; }
         [Column("NAME_FIELD")]
         public string Name { get; set; }
+    }
+
+    public class UnderscoreMapper : ConventionMapper
+    {
+        public UnderscoreMapper()
+        {
+            InflectColumnName = (i, cn) => i.Underscore(cn);
+            InflectTableName = (i, tn) => i.Underscore(tn);
+        }
+    }
+
+    public class MyOtherClass
+    {
+        public int OtherID { get; set; }
+        public string OtherName { get; set; }
     }
 }

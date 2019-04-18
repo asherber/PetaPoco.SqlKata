@@ -6,7 +6,7 @@
     <RootNamespace>PetaPoco.SqlKata</RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Aaron Sherber</Authors>
-    <Copyright>2018</Copyright>
+    <Copyright>2018-2019</Copyright>
     <PackageTags>petapoco sqlkata sql query builder</PackageTags>
     <Company />
     <Description>Extension methods for using SqlKata to generate SQL queries for PetaPoco.</Description>
@@ -14,7 +14,7 @@
     <RepositoryUrl>https://github.com/asherber/PetaPoco.SqlKata</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
-    <PackageReleaseNotes>Updated SqlKata to 1.1.5, which adds SQLite compiler.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added DefaultMapper</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -39,13 +39,17 @@ namespace PetaPoco.SqlKata
             {  CompilerType.SQLite, new Lazy<Compiler>(() => new SqliteCompiler()) },
         };
 
-        private static readonly IMapper _mapper = new ConventionMapper();
-
         /// <summary>
         /// Indicates the compiler that gets used when one is not specified.
         /// Defaults to SqlServer.
         /// </summary>
         public static CompilerType DefaultCompiler { get; set; } = CompilerType.SqlServer;
+
+        /// <summary>
+        /// The PetaPoco mapper used to map table and column names.
+        /// Defaults to a <seealso cref="ConventionMapper"/>.
+        /// </summary>
+        public static IMapper DefaultMapper { get; set; } = new ConventionMapper();
         
         /// <summary>
         /// Convert a <seealso cref="Query"/> object to a <seealso cref="Sql" /> object, 
@@ -76,7 +80,7 @@ namespace PetaPoco.SqlKata
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static Query ForType<T>(this Query query) => query.ForType<T>(_mapper);
+        public static Query ForType<T>(this Query query) => query.ForType<T>(DefaultMapper);
 
         /// <summary>
         /// Sets the table name for the <seealso cref="Query"/> based on the <seealso cref="PocoData"/> for the given type and mapper.
@@ -93,7 +97,7 @@ namespace PetaPoco.SqlKata
         /// <param name="query"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static Query ForType(this Query query, Type type) => query.ForType(type, _mapper);
+        public static Query ForType(this Query query, Type type) => query.ForType(type, DefaultMapper);
 
         /// <summary>
         /// Sets the table name for the <seealso cref="Query"/> based on the <seealso cref="PocoData"/> for the given type and mapper.
@@ -114,7 +118,7 @@ namespace PetaPoco.SqlKata
         /// <param name="query"></param>
         /// <param name="poco"></param>
         /// <returns></returns>
-        public static Query ForObject(this Query query, object poco) => query.ForObject(poco, _mapper);
+        public static Query ForObject(this Query query, object poco) => query.ForObject(poco, DefaultMapper);
 
         /// <summary>
         /// Sets the table name for the <seealso cref="Query"/> based on the <seealso cref="PocoData"/> for the given object and mapper.
@@ -132,7 +136,7 @@ namespace PetaPoco.SqlKata
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static Query GenerateSelect<T>(this Query query) => query.GenerateSelect<T>(_mapper);
+        public static Query GenerateSelect<T>(this Query query) => query.GenerateSelect<T>(DefaultMapper);
 
         /// <summary>
         /// Generates a SELECT query based on the <seealso cref="PocoData"/> for the given type and mapper.
@@ -149,7 +153,7 @@ namespace PetaPoco.SqlKata
         /// <param name="query"></param>
         /// <param name="poco"></param>
         /// <returns></returns>
-        public static Query GenerateSelect(this Query query, object poco) => query.GenerateSelect(poco, _mapper);
+        public static Query GenerateSelect(this Query query, object poco) => query.GenerateSelect(poco, DefaultMapper);
 
         /// <summary>
         /// Generates a SELECT query based on the <seealso cref="PocoData"/> for the given object and mapper.
@@ -167,7 +171,7 @@ namespace PetaPoco.SqlKata
         /// <param name="query"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public static Query GenerateSelect(this Query query, Type type) => query.GenerateSelect(type, _mapper);
+        public static Query GenerateSelect(this Query query, Type type) => query.GenerateSelect(type, DefaultMapper);
 
         /// <summary>
         /// Generates a SELECT query based on the <seealso cref="PocoData"/> for the given type and mapper.
