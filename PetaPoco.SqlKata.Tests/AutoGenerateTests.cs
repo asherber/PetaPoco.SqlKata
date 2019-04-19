@@ -164,6 +164,22 @@ namespace PetaPoco.SqlKata.Tests
             Compare(q, expected);
         }
 
+        [Fact]
+        public void Generate_T_SimpleClass_HasFrom()
+        {
+            var q = new Query().From("OtherTable").GenerateSelect<MyClass>();
+            var expected = new Query("OtherTable").Select("ID", "Name");
+            Compare(q, expected);
+        }
+
+        [Fact]
+        public void Generate_T_SimpleClass_HasSelect()
+        {
+            var q = new Query("OtherTable").Select("SomeField").GenerateSelect<MyClass>();
+            var expected = new Query("OtherTable").Select("SomeField");
+            Compare(q, expected);
+        }
+
         [Theory]
         [MemberData(nameof(Mappers))]
         public void Different_Mappers(IMapper mapper, string tableName, params string[] fieldNames)

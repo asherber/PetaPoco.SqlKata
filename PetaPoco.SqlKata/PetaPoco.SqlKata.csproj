@@ -14,7 +14,7 @@
     <RepositoryUrl>https://github.com/asherber/PetaPoco.SqlKata</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
-    <PackageReleaseNotes>Added DefaultMapper</PackageReleaseNotes>
+    <PackageReleaseNotes>Added IDatabase extensions for basic query operations</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

@@ -145,5 +145,34 @@ namespace PetaPoco.SqlKata.Tests
             var output = input.ToSql();
             output.Should().BeEquivalentTo(expected);
         }
+
+        [Fact]
+        public void HasFrom_WithFrom_IsTrue()
+        {
+            var query = new Query("Foo").Select("fruit");
+            query.HasFrom().Should().BeTrue();
+        }
+
+        [Fact]
+        public void HasFrom_NoFrom_IsFalse()
+        {
+            var query = new Query().Select("fruit");
+            query.HasFrom().Should().BeFalse();
+        }
+
+        [Fact]
+        public void HasSelect_WithSelect_IsTrue()
+        {
+            var query = new Query("Foo").Select("fruit");
+            query.HasSelect().Should().BeTrue();
+        }
+
+        [Fact]
+        public void HasSelect_NoSelect_IsFalse()
+        {
+            var query = new Query("Foo");
+            query.HasSelect().Should().BeFalse();
+        }
+
     }
 }

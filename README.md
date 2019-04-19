@@ -18,7 +18,6 @@ using (var db = new PetaPoco.Database(...))
     // Use the query in place of PetaPoco.Sql
     var records = db.Fetch<MyClass>(query.ToSql());
 }
-
 ```
 
 Note that while PetaPoco has an `EnableAutoSelect` feature that lets you omit the `SELECT` part of a query if your classes are set up correctly, SqlKata requires a table name in order to generate a query. If you try to use a `Query` without a table name, SqlKata will throw an `InvalidOperationException` when you call `ToSql()`.
@@ -45,10 +44,23 @@ var query = new Query().ForObject(new MyClass());
 var query = new Query().GenerateSelect<MyClass>();  
 var query = new Query().GenerateSelect(typeof(MyClass));
 var query = new Query().GenerateSelect(new MyClass());
-
 ```
 
 These methods all use a default `ConventionMapper`. They also have overloads that let you pass in your own `IMapper` instance, or you can assign one to `SqlKataExtensions.DefaultMapper`.
+
+### IDatabase Extension Methods
+
+To make things even easier, this library has extension methods on `IDatabase` that let you use a SqlKata `Query` directly with most basic `IDatabase` query operations. They will even auto generate the `SELECT` for you if needed.
+
+```csharp
+using (var db = new PetaPoco.Datbase(...))
+{
+    var query = new Query().Where("Foo", "bar");
+    
+    // Equivalent to db.Fetch<MyClass>(query.GenerateSelect<MyClass>().ToSql())
+    var records = db.Fetch<MyClass>(query);
+}
+```
 
 ### Compilers
 

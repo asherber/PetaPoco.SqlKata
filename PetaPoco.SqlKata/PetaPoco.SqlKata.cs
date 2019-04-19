@@ -1,5 +1,5 @@
 ﻿/**
- * Copyright 2018 Aaron Sherber
+ * Copyright 2018-19 Aaron Sherber
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,11 @@ using SqlKata;
 using SqlKata.Compilers;
 using PetaPoco;
 using PetaPoco.Core;
+
+#if DEBUG
+using System.Runtime.CompilerServices;
+[assembly: InternalsVisibleTo("PetaPoco.SqlKata.Tests")]
+#endif
 
 namespace PetaPoco.SqlKata
 {
@@ -182,11 +187,25 @@ namespace PetaPoco.SqlKata
         /// <returns></returns>
         public static Query GenerateSelect(this Query query, Type type, IMapper mapper)
         {
-            var pd = PocoData.ForType(type, mapper);
+            if (!query.HasSelect())
+            {
+                mapper = mapper ?? DefaultMapper ?? throw new ArgumentNullException(nameof(mapper));
+                var pd = PocoData.ForType(type, mapper);
+                query = pd.Columns.Any() ? query.Select(pd.QueryColumns) : query.SelectRaw("NULL");
 
-            query = query.From(pd.TableInfo.TableName);
-            query = pd.Columns.Any() ? query.Select(pd.QueryColumns) : query.SelectRaw("NULL");
+                if (!query.HasFrom())
+                    query = query.From(pd.TableInfo.TableName);
+            }
+
             return query;
+        }
+
+        internal static bool HasFrom(this Query query) => query.Clauses.OfType<FromClause>().Any();
+
+        internal static bool HasSelect(this Query query)
+        {
+            return query.Clauses.OfType<Column>()
+                .Any(c => String.Compare(c.Component, "select", true) == 0);
         }
     }
 }
