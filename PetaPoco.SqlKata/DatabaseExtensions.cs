@@ -21,11 +21,32 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PetaPoco.SqlKata;
+using PetaPoco.Core;
+using PetaPoco.Providers;
 
 namespace PetaPoco.Extensions
 {
     public static class DatabaseExtensions
     {
+        private static CompilerType ToCompiler(this IProvider provider)
+        {
+            if (provider is MySqlDatabaseProvider)
+                return CompilerType.MySql;
+            else if (provider is PostgreSQLDatabaseProvider)
+                return CompilerType.Postgres;
+            else if (provider is FirebirdDbDatabaseProvider)
+                return CompilerType.Firebird;
+            else if (provider is SQLiteDatabaseProvider)
+                return CompilerType.SQLite;
+            else if (provider is OracleDatabaseProvider)
+                return CompilerType.Oracle;
+            else
+                return CompilerType.SqlServer;
+        }
+
+        private static IMapper GetMapper<T>(this IDatabase db) => Mappers.GetMapper(typeof(T), db.DefaultMapper);
+        private static CompilerType GetCompiler(this IDatabase db) => db.Provider.ToCompiler();
+
         /// <summary>
         ///     Runs an SQL query, returning the results as an IEnumerable collection
         /// </summary>
@@ -39,25 +60,8 @@ namespace PetaPoco.Extensions
         /// </remarks>
         public static IEnumerable<T> Query<T>(this IDatabase db, Query query)
         {
-            return db.Query<T>(query, null);
-        }
-
-        /// <summary>
-        ///     Runs an SQL query, returning the results as an IEnumerable collection
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
-        /// <param name="mapper"></param>
-        /// <returns>An enumerable collection of result records</returns>
-        /// <remarks>
-        ///     For some DB providers, care should be taken to not start a new Query before finishing with
-        ///     and disposing the previous one. In cases where this is an issue, consider using Fetch which
-        ///     returns the results as a List rather than an IEnumerable.
-        /// </remarks>
-        public static IEnumerable<T> Query<T>(this IDatabase db, Query query, IMapper mapper)
-        {
-            query = query.GenerateSelect<T>(mapper);
-            return db.Query<T>(query.ToSql());
+            query = query.GenerateSelect<T>(db.GetMapper<T>());
+            return db.Query<T>(query.ToSql(db.GetCompiler()));
         }
 
         /// <summary>
@@ -68,71 +72,7 @@ namespace PetaPoco.Extensions
         /// <returns>A List holding the results of the query</returns>
         public static List<T> Fetch<T>(this IDatabase db, Query query)
         {
-            return db.Fetch<T>(query, null);
-        }
-
-        /// <summary>
-        ///     Runs a query and returns the result set as a typed list
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
-        /// <param name="mapper"></param>
-        /// <returns>A List holding the results of the query</returns>
-        public static List<T> Fetch<T>(this IDatabase db, Query query, IMapper mapper)
-        {
-            return db.Query<T>(query, mapper).ToList();
-        }
-
-        /// <summary>
-        ///     Runs a query that should always return a single row.
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
-        /// <returns>The single record returned by the query</returns>
-        /// <remarks>
-        ///     Throws an exception if there are zero or more than one matching record
-        /// </remarks>
-        public static T Single<T>(this IDatabase db, Query query)
-        {
-            return db.Single<T>(query, null);
-        }
-
-        /// <summary>
-        ///     Runs a query that should always return a single row.
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
-        /// <param name="mapper"></param>
-        /// <returns>The single record returned by the query</returns>
-        /// <remarks>
-        ///     Throws an exception if there are zero or more than one matching record
-        /// </remarks>
-        public static T Single<T>(this IDatabase db, Query query, IMapper mapper)
-        {
-            return db.Query<T>(query, mapper).Single();
-        }
-
-        /// <summary>
-        ///     Runs a query that should always return either a single row, or no rows
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
-        /// <returns>The single record returned by the query, or default(T) if no matching rows</returns>
-        public static T SingleOrDefault<T>(this IDatabase db, Query query)
-        {
-            return db.SingleOrDefault<T>(query, null);
-        }
-
-        /// <summary>
-        ///     Runs a query that should always return either a single row, or no rows
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
-        /// <param name="mapper"></param>
-        /// <returns>The single record returned by the query, or default(T) if no matching rows</returns>
-        public static T SingleOrDefault<T>(this IDatabase db, Query query, IMapper mapper)
-        {
-            return db.Query<T>(query, mapper).SingleOrDefault();
+            return db.Query<T>(query).ToList();
         }
 
         /// <summary>
@@ -143,19 +83,7 @@ namespace PetaPoco.Extensions
         /// <returns>The first record in the result set</returns>
         public static T First<T>(this IDatabase db, Query query)
         {
-            return db.First<T>(query, null);
-        }
-
-        /// <summary>
-        ///     Runs a query that should always return at least one row
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
-        /// <param name="mapper"></param>
-        /// <returns>The first record in the result set</returns>
-        public static T First<T>(this IDatabase db, Query query, IMapper mapper)
-        {
-            return db.Query<T>(query, mapper).First();
+            return db.Query<T>(query).First();
         }
 
         /// <summary>
@@ -166,27 +94,19 @@ namespace PetaPoco.Extensions
         /// <returns>The first record in the result set, or default(T) if no matching records</returns>
         public static T FirstOrDefault<T>(this IDatabase db, Query query)
         {
-            return db.FirstOrDefault<T>(query, null);
+            return db.Query<T>(query).FirstOrDefault();
         }
 
-        /// <summary>
-        ///     Runs a query and returns the first record, or the default value if no matching records
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
-        /// <param name="mapper"></param>
-        /// <returns>The first record in the result set, or default(T) if no matching records</returns>
-        public static T FirstOrDefault<T>(this IDatabase db, Query query, IMapper mapper)
-        {
-            return db.Query<T>(query, mapper).FirstOrDefault();
-        }
 
         /// <summary>
         ///     Executes a non-query command
         /// </summary>
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
         /// <returns>The number of rows affected</returns>
-        public static int Execute(this IDatabase db, Query query) => db.Execute(query.ToSql());
+        public static int Execute(this IDatabase db, Query query)
+        {
+            return db.Execute(query.ToSql(db.GetCompiler()));
+        }
 
         /// <summary>
         ///     Executes a query and return the first column of the first row in the result set.
@@ -194,7 +114,10 @@ namespace PetaPoco.Extensions
         /// <typeparam name="T">The type that the result value should be cast to</typeparam>
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
         /// <returns>The scalar value cast to T</returns>
-        public static T ExecuteScalar<T>(this IDatabase db, Query query) => db.ExecuteScalar<T>(query.ToSql());
+        public static T ExecuteScalar<T>(this IDatabase db, Query query)
+        {
+            return db.ExecuteScalar<T>(query.ToSql(db.GetCompiler()));
+        }
 
         /// <summary>
         ///     Retrieves a range of records from result set
@@ -210,26 +133,8 @@ namespace PetaPoco.Extensions
         /// </remarks>
         public static Page<T> Page<T>(this IDatabase db, long page, long itemsPerPage, Query query)
         {
-            return db.Page<T>(page, itemsPerPage, query, null);
-        }
-
-        /// <summary>
-        ///     Retrieves a range of records from result set
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="skip">The number of rows at the start of the result set to skip over</param>
-        /// <param name="take">The number of rows to retrieve</param>
-        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
-        /// <param name="mapper"></param>
-        /// <returns>A List of results</returns>
-        /// <remarks>
-        ///     PetaPoco will automatically modify the supplied SELECT statement to only retrieve the
-        ///     records for the specified range.
-        /// </remarks>
-        public static Page<T> Page<T>(this IDatabase db, long page, long itemsPerPage, Query query, IMapper mapper)
-        {
-            query = query.GenerateSelect<T>(mapper);
-            return db.Page<T>(page, itemsPerPage, query.ToSql());
+            query = query.GenerateSelect<T>(db.GetMapper<T>());
+            return db.Page<T>(page, itemsPerPage, query.ToSql(db.GetCompiler()));
         }
 
         /// <summary>
@@ -246,26 +151,8 @@ namespace PetaPoco.Extensions
         /// </remarks>
         public static List<T> SkipTake<T>(this IDatabase db, long skip, long take, Query query)
         {
-            return db.SkipTake<T>(skip, take, query, null);
-        }
-
-        /// <summary>
-        ///     Retrieves a range of records from result set
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="skip">The number of rows at the start of the result set to skip over</param>
-        /// <param name="take">The number of rows to retrieve</param>
-        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
-        /// <param name="mapper"></param>
-        /// <returns>A List of results</returns>
-        /// <remarks>
-        ///     PetaPoco will automatically modify the supplied SELECT statement to only retrieve the
-        ///     records for the specified range.
-        /// </remarks>
-        public static List<T> SkipTake<T>(this IDatabase db, long skip, long take, Query query, IMapper mapper)
-        {
-            query = query.GenerateSelect<T>(mapper);
-            return db.SkipTake<T>(skip, take, query.ToSql());
+            query = query.GenerateSelect<T>(db.GetMapper<T>());
+            return db.SkipTake<T>(skip, take, query.ToSql(db.GetCompiler()));
         }
     }
 }

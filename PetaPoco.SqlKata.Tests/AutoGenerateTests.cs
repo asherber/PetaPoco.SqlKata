@@ -269,48 +269,45 @@ namespace PetaPoco.SqlKata.Tests
             new object[] { new ConventionMapper(), "MyOtherClass", "OtherID", "OtherName" },
             new object[] { null, "MyOtherClass", "OtherID", "OtherName" },
         };
-    }
 
-
-
-
-    public class MyClass
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
-    }
-
-    public class NoFields
-    {
-    }
-
-    [TableName("TableName")]
-    public class MyClassWithName
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
-    }
-
-    public class MyClassWithColumnNames
-    {
-        [Column("ID_FIELD")]
-        public int ID { get; set; }
-        [Column("NAME_FIELD")]
-        public string Name { get; set; }
-    }
-
-    public class UnderscoreMapper : ConventionMapper
-    {
-        public UnderscoreMapper()
+        public class MyClass
         {
-            InflectColumnName = (i, cn) => i.Underscore(cn);
-            InflectTableName = (i, tn) => i.Underscore(tn);
+            public int ID { get; set; }
+            public string Name { get; set; }
         }
-    }
 
-    public class MyOtherClass
-    {
-        public int OtherID { get; set; }
-        public string OtherName { get; set; }
+        public class NoFields
+        {
+        }
+
+        [TableName("TableName")]
+        public class MyClassWithName
+        {
+            public int ID { get; set; }
+            public string Name { get; set; }
+        }
+
+        public class MyClassWithColumnNames
+        {
+            [Column("ID_FIELD")]
+            public int ID { get; set; }
+            [Column("NAME_FIELD")]
+            public string Name { get; set; }
+        }
+
+        public class UnderscoreMapper : ConventionMapper
+        {
+            public UnderscoreMapper()
+            {
+                InflectColumnName = (i, cn) => i.Underscore(cn);
+                InflectTableName = (i, tn) => i.Underscore(tn);
+            }
+        }
+
+        public class MyOtherClass
+        {
+            public int OtherID { get; set; }
+            public string OtherName { get; set; }
+        }
     }
 }
