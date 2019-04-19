@@ -23,7 +23,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="PetaPoco.Compiled" Version="[6.0.316,7)" />
-    <PackageReference Include="SqlKata" Version="[1.1.5,2)" />
+    <PackageReference Include="SqlKata" Version="[1.1.7,2)" />
   </ItemGroup>
 
 </Project>
