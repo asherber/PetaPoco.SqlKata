@@ -31,7 +31,7 @@ using System.Runtime.CompilerServices;
 
 namespace PetaPoco.SqlKata
 {
-    public enum CompilerType { SqlServer, MySql, Postgres, Firebird, SQLite };
+    public enum CompilerType { SqlServer, MySql, Postgres, Firebird, SQLite, Oracle };
 
     public static class SqlKataExtensions
     {
@@ -42,6 +42,7 @@ namespace PetaPoco.SqlKata
             {  CompilerType.Postgres, new Lazy<Compiler>(() => new PostgresCompiler()) },
             {  CompilerType.Firebird, new Lazy<Compiler>(() => new FirebirdCompiler()) },
             {  CompilerType.SQLite, new Lazy<Compiler>(() => new SqliteCompiler()) },
+            {  CompilerType.Oracle, new Lazy<Compiler>(() => new OracleCompiler()) },
         };
 
         /// <summary>
