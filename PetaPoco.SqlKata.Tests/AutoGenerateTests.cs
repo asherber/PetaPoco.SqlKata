@@ -180,6 +180,52 @@ namespace PetaPoco.SqlKata.Tests
             Compare(q, expected);
         }
 
+        [Fact]
+        public void ForType_NullQuery_Throws()
+        {
+            Query query = null;
+            Action act = () => query.ForType<MyClass>();
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void GenerateSelect_NullQuery_Throws()
+        {
+            Query query = null;
+            Action act = () => query.GenerateSelect<MyClass>();
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void ForType_NullMapper_Throws()
+        {
+            try
+            {
+                SqlKataExtensions.DefaultMapper = null;
+                Action act = () => new Query().ForType<MyClass>(null);
+                act.Should().Throw<ArgumentNullException>();
+            }
+            finally
+            {
+                SqlKataExtensions.DefaultMapper = new ConventionMapper();
+            }
+        }
+
+        [Fact]
+        public void GenerateSelect_NullMapper_Throws()
+        {
+            try
+            {
+                SqlKataExtensions.DefaultMapper = null;
+                Action act = () => new Query().GenerateSelect<MyClass>(null);
+                act.Should().Throw<ArgumentNullException>();
+            }
+            finally
+            {
+                SqlKataExtensions.DefaultMapper = new ConventionMapper();
+            }
+        }
+
         [Theory]
         [MemberData(nameof(Mappers))]
         public void Different_Mappers(IMapper mapper, string tableName, params string[] fieldNames)
@@ -200,17 +246,20 @@ namespace PetaPoco.SqlKata.Tests
         [MemberData(nameof(Mappers))]
         public void Different_Default_Mappers(IMapper mapper, string tableName, params string[] fieldNames)
         {
-            try
+            if (mapper != null)
             {
-                SqlKataExtensions.DefaultMapper = mapper;
-                var q = new Query().GenerateSelect<MyOtherClass>();
-                var expected = new Query(tableName).Select(fieldNames);
-                Compare(q, expected);
-            }
-            finally
-            {
-                SqlKataExtensions.DefaultMapper = new ConventionMapper();
-                PetaPoco.Mappers.RevokeAll();
+                try
+                {
+                    SqlKataExtensions.DefaultMapper = mapper;
+                    var q = new Query().GenerateSelect<MyOtherClass>();
+                    var expected = new Query(tableName).Select(fieldNames);
+                    Compare(q, expected);
+                }
+                finally
+                {
+                    SqlKataExtensions.DefaultMapper = new ConventionMapper();
+                    PetaPoco.Mappers.RevokeAll();
+                }
             }
         }
 
@@ -218,6 +267,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             new object[] { new UnderscoreMapper(), "my_other_class", "other_id", "other_name" },
             new object[] { new ConventionMapper(), "MyOtherClass", "OtherID", "OtherName" },
+            new object[] { null, "MyOtherClass", "OtherID", "OtherName" },
         };
     }
 

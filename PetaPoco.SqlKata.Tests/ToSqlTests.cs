@@ -174,5 +174,12 @@ namespace PetaPoco.SqlKata.Tests
             query.HasSelect().Should().BeFalse();
         }
 
+        [Fact]
+        public void NullQuery_ShouldThrow()
+        {
+            Query query = null;
+            Action act = () => query.ToSql();
+            act.Should().Throw<ArgumentNullException>();
+        }
     }
 }

@@ -56,6 +56,8 @@ namespace PetaPoco.SqlKata
         /// </summary>
         public static IMapper DefaultMapper { get; set; } = new ConventionMapper();
         
+
+
         /// <summary>
         /// Convert a <seealso cref="Query"/> object to a <seealso cref="Sql" /> object, 
         /// using a <seealso cref="SqlServerCompiler"/>.
@@ -72,6 +74,8 @@ namespace PetaPoco.SqlKata
         /// <returns></returns>
         public static Sql ToSql(this Query query, CompilerType compilerType)
         {
+            query = query ?? throw new ArgumentNullException(nameof(query));
+
             var compiler = _compilers[compilerType].Value;
             var compiled = compiler.Compile(query);
             var ppSql = Helper.ReplaceAll(compiled.RawSql, "?", x => "@" + x);
@@ -113,6 +117,9 @@ namespace PetaPoco.SqlKata
         /// <returns></returns>
         public static Query ForType(this Query query, Type type, IMapper mapper)
         {
+            query = query ?? throw new ArgumentNullException(nameof(query));
+            mapper = mapper ?? DefaultMapper ?? throw new ArgumentNullException(nameof(mapper));
+
             var tableInfo = mapper.GetTableInfo(type);
             return query.From(tableInfo.TableName);
         }
@@ -187,6 +194,8 @@ namespace PetaPoco.SqlKata
         /// <returns></returns>
         public static Query GenerateSelect(this Query query, Type type, IMapper mapper)
         {
+            query = query ?? throw new ArgumentNullException(nameof(query));
+
             if (!query.HasSelect())
             {
                 mapper = mapper ?? DefaultMapper ?? throw new ArgumentNullException(nameof(mapper));
