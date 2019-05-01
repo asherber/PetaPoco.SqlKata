@@ -14,7 +14,7 @@
     <RepositoryUrl>https://github.com/asherber/PetaPoco.SqlKata</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
-    <PackageReleaseNotes>Added IDatabase extensions for basic query operations</PackageReleaseNotes>
+    <PackageReleaseNotes>Added multi-result set and multi-POCO methods to IDatabase extensions</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
