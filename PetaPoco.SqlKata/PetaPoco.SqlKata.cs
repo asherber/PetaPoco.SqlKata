@@ -197,25 +197,17 @@ namespace PetaPoco.SqlKata
         {
             query = query ?? throw new ArgumentNullException(nameof(query));
 
-            if (!query.HasSelect())
+            if (!query.HasComponent("select"))
             {
                 mapper = mapper ?? DefaultMapper ?? throw new ArgumentNullException(nameof(mapper));
                 var pd = PocoData.ForType(type, mapper);
                 query = pd.Columns.Any() ? query.Select(pd.QueryColumns) : query.SelectRaw("NULL");
 
-                if (!query.HasFrom())
+                if (!query.HasComponent("from"))
                     query = query.From(pd.TableInfo.TableName);
             }
 
             return query;
-        }
-
-        internal static bool HasFrom(this Query query) => query.Clauses.OfType<FromClause>().Any();
-
-        internal static bool HasSelect(this Query query)
-        {
-            return query.Clauses.OfType<Column>()
-                .Any(c => String.Compare(c.Component, "select", true) == 0);
         }
     }
 }

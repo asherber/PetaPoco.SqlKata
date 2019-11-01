@@ -63,6 +63,66 @@ namespace PetaPoco.SqlKata.Tests
             output.Should().BeEquivalentTo(expected);
         }
 
+        public class SimpleClass
+        {
+            public int ID { get; set; }
+            public string Name { get; set; }
+        }
+
+        [Fact]
+        public void GenerateSelect_SimpleType()
+        {
+            var input = new Query().GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT [ID], [Name] FROM [SimpleClass]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void GenerateSelect_SimpleType_WithFrom()
+        {
+            var input = new Query("SimpleClass").GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT [ID], [Name] FROM [SimpleClass]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void GenerateSelect_SimpleType_With_Columns()
+        {
+            var input = new Query("SimpleClass").Select("ID").GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT [ID] FROM [SimpleClass]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void GenerateSelect_With_SelectRaw()
+        {
+            var input = new Query("foo").SelectRaw("count(*)").GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT count(*) FROM [foo]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void GenerateSelect_With_From()
+        {
+            var input = new Query().From("MyOtherTable").GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT [ID], [Name] FROM [MyOtherTable]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void GenerateSelect_With_FromRaw()
+        {
+            var input = new Query().FromRaw("MyOtherTable").GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT [ID], [Name] FROM MyOtherTable");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
         [Fact]
         public void Select_With_Where()
         {
@@ -144,34 +204,6 @@ namespace PetaPoco.SqlKata.Tests
             var expected = new Sql("INSERT INTO [Foo] ([Fruit], [Vegetable]) VALUES (@0, @1)", "apple", "carrot");
             var output = input.ToSql();
             output.Should().BeEquivalentTo(expected);
-        }
-
-        [Fact]
-        public void HasFrom_WithFrom_IsTrue()
-        {
-            var query = new Query("Foo").Select("fruit");
-            query.HasFrom().Should().BeTrue();
-        }
-
-        [Fact]
-        public void HasFrom_NoFrom_IsFalse()
-        {
-            var query = new Query().Select("fruit");
-            query.HasFrom().Should().BeFalse();
-        }
-
-        [Fact]
-        public void HasSelect_WithSelect_IsTrue()
-        {
-            var query = new Query("Foo").Select("fruit");
-            query.HasSelect().Should().BeTrue();
-        }
-
-        [Fact]
-        public void HasSelect_NoSelect_IsFalse()
-        {
-            var query = new Query("Foo");
-            query.HasSelect().Should().BeFalse();
         }
 
         [Fact]
