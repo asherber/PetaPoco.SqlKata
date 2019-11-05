@@ -123,8 +123,6 @@ namespace PetaPoco.Extensions
         ///     Retrieves a range of records from result set
         /// </summary>
         /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="skip">The number of rows at the start of the result set to skip over</param>
-        /// <param name="take">The number of rows to retrieve</param>
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
         /// <returns>A List of results</returns>
         /// <remarks>
@@ -159,7 +157,6 @@ namespace PetaPoco.Extensions
         ///     Perform a multi-results set query
         /// </summary>
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
-        /// <param name="args">Arguments to any embedded parameters in the SQL</param>
         /// <returns>A GridReader to be queried</returns>
         public static IGridReader QueryMultiple(this IDatabase db, Query query)
         {

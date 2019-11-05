@@ -16,6 +16,12 @@
     <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
     <PackageReleaseNotes>Added multi-result set and multi-POCO methods to IDatabase extensions</PackageReleaseNotes>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591;1570;1587</NoWarn>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.13">
