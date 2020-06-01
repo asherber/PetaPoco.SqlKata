@@ -14,13 +14,13 @@
     <RepositoryUrl>https://github.com/asherber/PetaPoco.SqlKata</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
-    <PackageReleaseNotes>Added multi-result set and multi-POCO methods to IDatabase extensions</PackageReleaseNotes>
+    <PackageReleaseNotes>Requires v2 of SqlKata; the assembly name changed in this version from QueryBuilder.dll to SqlKata.dll.</PackageReleaseNotes>
   </PropertyGroup>
   
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
-    <NoWarn>$(NoWarn);1591;1570;1587</NoWarn>
+    <NoWarn>$(NoWarn);1591;1570;1587;1573;0419</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,7 +29,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="PetaPoco.Compiled" Version="[6.0.316,7)" />
-    <PackageReference Include="SqlKata" Version="[1.1.7,2)" />
+    <PackageReference Include="SqlKata" Version="[2.1,3)" />
   </ItemGroup>
 
 </Project>
