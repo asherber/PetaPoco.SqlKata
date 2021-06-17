@@ -1,5 +1,5 @@
 ﻿/**
- * Copyright 2018-19 Aaron Sherber
+ * Copyright 2018-21 Aaron Sherber
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,9 +75,32 @@ namespace PetaPoco.SqlKata
         /// <returns></returns>
         public static Sql ToSql(this Query query, CompilerType compilerType)
         {
+            var compiler = _compilers[compilerType].Value;
+            return query.ToSql(compiler);
+        }
+
+        /// <summary>
+        /// Convert a <seealso cref="Query"/> object to a <seealso cref="Sql" /> object.
+        /// </summary>
+        /// <typeparam name="T">Type of <seealso cref="Compiler"/> to use.</typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static Sql ToSql<T>(this Query query) where T : Compiler, new()
+        {
+            var compiler = new T();
+            return query.ToSql(compiler);
+        }
+
+        /// <summary>
+        /// Convert a <seealso cref="Query"/> object to a <seealso cref="Sql" /> object.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="compiler"></param>
+        /// <returns></returns>
+        public static Sql ToSql(this Query query, Compiler compiler)
+        {
             query = query ?? throw new ArgumentNullException(nameof(query));
 
-            var compiler = _compilers[compilerType].Value;
             var compiled = compiler.Compile(query);
             var ppSql = Helper.ReplaceAll(compiled.RawSql, "?", x => "@" + x);
 

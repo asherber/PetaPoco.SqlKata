@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using FluentAssertions;
+using SqlKata.Compilers;
 
 namespace PetaPoco.SqlKata.Tests
 {
@@ -212,6 +213,32 @@ namespace PetaPoco.SqlKata.Tests
             Query query = null;
             Action act = () => query.ToSql();
             act.Should().Throw<ArgumentNullException>();
+        }
+
+        public class PercentCompiler : Compiler
+        {
+            public PercentCompiler()
+            {
+                OpeningIdentifier = ClosingIdentifier = "%%";
+            }
+        }
+
+        [Fact]
+        public void Pass_Compiler_Instance()
+        {
+            var input = new Query("Foo");
+            var expected = new Sql("SELECT * FROM %%Foo%%");
+            var output = input.ToSql(new PercentCompiler());
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Pass_Generic()
+        {
+            var input = new Query("Foo");
+            var expected = new Sql("SELECT * FROM %%Foo%%");
+            var output = input.ToSql<PercentCompiler>();
+            output.Should().BeEquivalentTo(expected);
         }
     }
 }

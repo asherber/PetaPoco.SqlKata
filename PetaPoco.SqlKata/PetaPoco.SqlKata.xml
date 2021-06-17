@@ -301,6 +301,22 @@
             <param name="compilerType"></param>
             <returns></returns>
         </member>
+        <member name="M:PetaPoco.SqlKata.SqlKataExtensions.ToSql``1(SqlKata.Query)">
+            <summary>
+            Convert a <seealso cref="T:SqlKata.Query"/> object to a <seealso cref="T:PetaPoco.Sql" /> object.
+            </summary>
+            <typeparam name="T">Type of <seealso cref="T:SqlKata.Compilers.Compiler"/> to use.</typeparam>
+            <param name="query"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PetaPoco.SqlKata.SqlKataExtensions.ToSql(SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+            Convert a <seealso cref="T:SqlKata.Query"/> object to a <seealso cref="T:PetaPoco.Sql" /> object.
+            </summary>
+            <param name="query"></param>
+            <param name="compiler"></param>
+            <returns></returns>
+        </member>
         <member name="M:PetaPoco.SqlKata.SqlKataExtensions.ForType``1(SqlKata.Query)">
             <summary>
             Sets the table name for the <seealso cref="T:SqlKata.Query"/> based on the <seealso cref="T:PetaPoco.Core.PocoData"/> for the given type, using a default mapper.

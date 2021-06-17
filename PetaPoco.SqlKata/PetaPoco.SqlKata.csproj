@@ -6,7 +6,7 @@
     <RootNamespace>PetaPoco.SqlKata</RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Aaron Sherber</Authors>
-    <Copyright>2018-2020</Copyright>
+    <Copyright>2018-2021</Copyright>
     <PackageTags>petapoco sqlkata sql query builder</PackageTags>
     <Company />
     <Description>Extension methods for using SqlKata to generate SQL queries for PetaPoco.</Description>
