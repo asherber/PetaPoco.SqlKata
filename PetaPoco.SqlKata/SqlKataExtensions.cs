@@ -31,33 +31,63 @@ using System.Runtime.CompilerServices;
 
 namespace PetaPoco.SqlKata
 {
-    public enum CompilerType { SqlServer, MySql, Postgres, Firebird, SQLite, Oracle };
+    public enum CompilerType { SqlServer, MySql, Postgres, Firebird, SQLite, Oracle, Custom };
 
     public static class SqlKataExtensions
     {
         private static readonly Dictionary<CompilerType, Lazy<Compiler>> _compilers = new Dictionary<CompilerType, Lazy<Compiler>>()
         {
-            {  CompilerType.SqlServer, new Lazy<Compiler>(() => new SqlServerCompiler()) },
-            {  CompilerType.MySql, new Lazy<Compiler>(() => new MySqlCompiler()) },
-            {  CompilerType.Postgres, new Lazy<Compiler>(() => new PostgresCompiler()) },
-            {  CompilerType.Firebird, new Lazy<Compiler>(() => new FirebirdCompiler()) },
-            {  CompilerType.SQLite, new Lazy<Compiler>(() => new SqliteCompiler()) },
-            {  CompilerType.Oracle, new Lazy<Compiler>(() => new OracleCompiler()) },
+            { CompilerType.SqlServer, new Lazy<Compiler>(() => new SqlServerCompiler()) },
+            { CompilerType.MySql, new Lazy<Compiler>(() => new MySqlCompiler()) },
+            { CompilerType.Postgres, new Lazy<Compiler>(() => new PostgresCompiler()) },
+            { CompilerType.Firebird, new Lazy<Compiler>(() => new FirebirdCompiler()) },
+            { CompilerType.SQLite, new Lazy<Compiler>(() => new SqliteCompiler()) },
+            { CompilerType.Oracle, new Lazy<Compiler>(() => new OracleCompiler()) },            
         };
 
+        private static CompilerType _defaultCompiler = CompilerType.SqlServer;
+        private static Compiler _customCompiler;
+
         /// <summary>
-        /// Indicates the compiler that gets used when one is not specified.
+        /// Indicates the <seealso cref="Compiler"/> that gets used when one is not specified.
         /// Defaults to SqlServer.
         /// </summary>
-        public static CompilerType DefaultCompiler { get; set; } = CompilerType.SqlServer;
+        public static CompilerType DefaultCompiler
+        {
+            get => _defaultCompiler;
+            set
+            {
+                if (value != _defaultCompiler && value != CompilerType.Custom)
+                {
+                    _customCompiler = null;
+                }
+
+                _defaultCompiler = value;
+            }
+        }
+
+        /// <summary>
+        /// A custom <seealso cref="Compiler"/> instance to use when one is not specified.
+        /// </summary>
+        public static Compiler CustomCompiler 
+        { 
+            get => _customCompiler; 
+            set 
+            {
+                if (value != null)
+                {
+                    _defaultCompiler = CompilerType.Custom;
+                }
+
+                _customCompiler = value;                 
+            } 
+        }
 
         /// <summary>
         /// The PetaPoco mapper used to map table and column names.
         /// Defaults to a <seealso cref="ConventionMapper"/>.
         /// </summary>
-        public static IMapper DefaultMapper { get; set; } = new ConventionMapper();
-        
-
+        public static IMapper DefaultMapper { get; set; } = new ConventionMapper();        
 
         /// <summary>
         /// Convert a <seealso cref="Query"/> object to a <seealso cref="Sql" /> object, 
@@ -75,7 +105,17 @@ namespace PetaPoco.SqlKata
         /// <returns></returns>
         public static Sql ToSql(this Query query, CompilerType compilerType)
         {
-            var compiler = _compilers[compilerType].Value;
+            Compiler compiler;
+            if (compilerType == CompilerType.Custom)
+            {
+                compiler = CustomCompiler
+                    ?? throw new InvalidOperationException($"'{nameof(compilerType)}' is 'Custom' but no CustomCompiler was provided.");
+            }
+            else
+            {
+                compiler = _compilers[compilerType].Value;
+            }
+
             return query.ToSql(compiler);
         }
 
@@ -100,6 +140,7 @@ namespace PetaPoco.SqlKata
         public static Sql ToSql(this Query query, Compiler compiler)
         {
             query = query ?? throw new ArgumentNullException(nameof(query));
+            compiler = compiler ?? throw new ArgumentNullException(nameof(compiler));
 
             var compiled = compiler.Compile(query);
             var ppSql = Helper.ReplaceAll(compiled.RawSql, "?", x => "@" + x);

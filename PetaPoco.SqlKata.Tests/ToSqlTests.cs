@@ -215,6 +215,15 @@ namespace PetaPoco.SqlKata.Tests
             act.Should().Throw<ArgumentNullException>();
         }
 
+        [Fact]
+        public void NullCompiler_ShouldThrow()
+        {
+            var input = new Query("Foo");
+            Compiler compiler = null;
+            Action act = () => input.ToSql(compiler);
+            act.Should().Throw<ArgumentNullException>();
+        }
+
         public class PercentCompiler : Compiler
         {
             public PercentCompiler()
@@ -223,22 +232,54 @@ namespace PetaPoco.SqlKata.Tests
             }
         }
 
-        [Fact]
-        public void Pass_Compiler_Instance()
+        private void Compile_With_Percents(Func<Query, Sql> compile)
         {
             var input = new Query("Foo");
             var expected = new Sql("SELECT * FROM %%Foo%%");
-            var output = input.ToSql(new PercentCompiler());
+            var output = compile(input);                
             output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Pass_Compiler_Instance()
+        {
+            Compile_With_Percents(q => q.ToSql(new PercentCompiler()));
         }
 
         [Fact]
         public void Pass_Generic()
         {
-            var input = new Query("Foo");
-            var expected = new Sql("SELECT * FROM %%Foo%%");
-            var output = input.ToSql<PercentCompiler>();
-            output.Should().BeEquivalentTo(expected);
+            Compile_With_Percents(q => q.ToSql<PercentCompiler>());
+        }
+
+        [Fact]
+        public void Set_Custom_Instance()
+        {
+            try
+            {
+                SqlKataExtensions.CustomCompiler = new PercentCompiler();
+                Compile_With_Percents(q => q.ToSql());
+            }
+            finally
+            {
+                SqlKataExtensions.DefaultCompiler = CompilerType.SqlServer;
+            }
+        }
+
+        [Fact]
+        public void Null_Custom_Instance()
+        {
+            try
+            {
+                SqlKataExtensions.DefaultCompiler = CompilerType.Custom;
+                var input = new Query("Foo");
+                Action act = () => input.ToSql();
+                act.Should().Throw<InvalidOperationException>();
+            }
+            finally
+            {
+                SqlKataExtensions.DefaultCompiler = CompilerType.SqlServer;
+            }
         }
     }
 }

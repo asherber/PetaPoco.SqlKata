@@ -275,8 +275,13 @@
         </member>
         <member name="P:PetaPoco.SqlKata.SqlKataExtensions.DefaultCompiler">
             <summary>
-            Indicates the compiler that gets used when one is not specified.
+            Indicates the <seealso cref="T:SqlKata.Compilers.Compiler"/> that gets used when one is not specified.
             Defaults to SqlServer.
+            </summary>
+        </member>
+        <member name="P:PetaPoco.SqlKata.SqlKataExtensions.CustomCompiler">
+            <summary>
+            A custom <seealso cref="T:SqlKata.Compilers.Compiler"/> instance to use when one is not specified.
             </summary>
         </member>
         <member name="P:PetaPoco.SqlKata.SqlKataExtensions.DefaultMapper">
