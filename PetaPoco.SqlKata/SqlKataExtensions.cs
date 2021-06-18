@@ -1,5 +1,5 @@
 ﻿/**
- * Copyright 2018-19 Aaron Sherber
+ * Copyright 2018-21 Aaron Sherber
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,33 +31,63 @@ using System.Runtime.CompilerServices;
 
 namespace PetaPoco.SqlKata
 {
-    public enum CompilerType { SqlServer, MySql, Postgres, Firebird, SQLite, Oracle };
+    public enum CompilerType { SqlServer, MySql, Postgres, Firebird, SQLite, Oracle, Custom };
 
     public static class SqlKataExtensions
     {
-        private static readonly Dictionary<CompilerType, Lazy<Compiler>> _compilers = new Dictionary<CompilerType, Lazy<Compiler>>()
-        {
-            {  CompilerType.SqlServer, new Lazy<Compiler>(() => new SqlServerCompiler()) },
-            {  CompilerType.MySql, new Lazy<Compiler>(() => new MySqlCompiler()) },
-            {  CompilerType.Postgres, new Lazy<Compiler>(() => new PostgresCompiler()) },
-            {  CompilerType.Firebird, new Lazy<Compiler>(() => new FirebirdCompiler()) },
-            {  CompilerType.SQLite, new Lazy<Compiler>(() => new SqliteCompiler()) },
-            {  CompilerType.Oracle, new Lazy<Compiler>(() => new OracleCompiler()) },
-        };
+        private static CompilerType _defaultCompilerType = CompilerType.SqlServer;
+        private static Compiler _customCompiler;
+        private readonly static object _compilerLock = new object();
 
         /// <summary>
-        /// Indicates the compiler that gets used when one is not specified.
+        /// Indicates the <seealso cref="Compiler"/> that gets used when one is not specified.
         /// Defaults to SqlServer.
         /// </summary>
-        public static CompilerType DefaultCompiler { get; set; } = CompilerType.SqlServer;
+        public static CompilerType DefaultCompilerType
+        {
+            get => _defaultCompilerType;
+            set
+            {
+                lock (_compilerLock)
+                {
+                    if (value != _defaultCompilerType && value != CompilerType.Custom)
+                    {
+                        _customCompiler = null;
+                    }
+
+                    _defaultCompilerType = value;
+                }
+            }
+        }
+
+        [Obsolete("Use DefaultCompilerType instead.")]
+        public static CompilerType DefaultCompiler { get => DefaultCompilerType; set => DefaultCompilerType = value; }
+
+        /// <summary>
+        /// A custom <seealso cref="Compiler"/> instance to use when one is not specified.
+        /// </summary>
+        public static Compiler CustomCompiler 
+        { 
+            get => _customCompiler; 
+            set 
+            {
+                lock (_compilerLock)
+                {
+                    if (value != null)
+                    {
+                        _defaultCompilerType = CompilerType.Custom;
+                    }
+
+                    _customCompiler = value;
+                }
+            } 
+        }
 
         /// <summary>
         /// The PetaPoco mapper used to map table and column names.
         /// Defaults to a <seealso cref="ConventionMapper"/>.
         /// </summary>
-        public static IMapper DefaultMapper { get; set; } = new ConventionMapper();
-        
-
+        public static IMapper DefaultMapper { get; set; } = new ConventionMapper();        
 
         /// <summary>
         /// Convert a <seealso cref="Query"/> object to a <seealso cref="Sql" /> object, 
@@ -65,7 +95,7 @@ namespace PetaPoco.SqlKata
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static Sql ToSql(this Query query) => query.ToSql(DefaultCompiler);
+        public static Sql ToSql(this Query query) => query.ToSql(DefaultCompilerType);
 
         /// <summary>
         /// Convert a <seealso cref="Query"/> object to a <seealso cref="Sql" /> object.
@@ -75,9 +105,43 @@ namespace PetaPoco.SqlKata
         /// <returns></returns>
         public static Sql ToSql(this Query query, CompilerType compilerType)
         {
-            query = query ?? throw new ArgumentNullException(nameof(query));
+            Compiler compiler;
+            if (compilerType == CompilerType.Custom)
+            {
+                compiler = CustomCompiler
+                    ?? throw new InvalidOperationException($"'{nameof(compilerType)}' is 'Custom' but no CustomCompiler was provided.");
+            }
+            else
+            {
+                compiler = DefaultCompilers.Get(compilerType);
+            }
 
-            var compiler = _compilers[compilerType].Value;
+            return query.ToSql(compiler);
+        }
+
+        /// <summary>
+        /// Convert a <seealso cref="Query"/> object to a <seealso cref="Sql" /> object.
+        /// </summary>
+        /// <typeparam name="T">Type of <seealso cref="Compiler"/> to use.</typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public static Sql ToSql<T>(this Query query) where T : Compiler, new()
+        {
+            var compiler = new T();
+            return query.ToSql(compiler);
+        }
+
+        /// <summary>
+        /// Convert a <seealso cref="Query"/> object to a <seealso cref="Sql" /> object.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="compiler"></param>
+        /// <returns></returns>
+        public static Sql ToSql(this Query query, Compiler compiler)
+        {
+            query = query ?? throw new ArgumentNullException(nameof(query));
+            compiler = compiler ?? throw new ArgumentNullException(nameof(compiler));
+
             var compiled = compiler.Compile(query);
             var ppSql = Helper.ReplaceAll(compiled.RawSql, "?", x => "@" + x);
 
@@ -197,25 +261,17 @@ namespace PetaPoco.SqlKata
         {
             query = query ?? throw new ArgumentNullException(nameof(query));
 
-            if (!query.HasSelect())
+            if (!query.HasComponent("select"))
             {
                 mapper = mapper ?? DefaultMapper ?? throw new ArgumentNullException(nameof(mapper));
                 var pd = PocoData.ForType(type, mapper);
                 query = pd.Columns.Any() ? query.Select(pd.QueryColumns) : query.SelectRaw("NULL");
 
-                if (!query.HasFrom())
+                if (!query.HasComponent("from"))
                     query = query.From(pd.TableInfo.TableName);
             }
 
             return query;
-        }
-
-        internal static bool HasFrom(this Query query) => query.Clauses.OfType<FromClause>().Any();
-
-        internal static bool HasSelect(this Query query)
-        {
-            return query.Clauses.OfType<Column>()
-                .Any(c => String.Compare(c.Component, "select", true) == 0);
         }
     }
 }

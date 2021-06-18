@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using FluentAssertions;
+using SqlKata.Compilers;
 
 namespace PetaPoco.SqlKata.Tests
 {
@@ -33,7 +34,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             try
             {
-                SqlKataExtensions.DefaultCompiler = type;
+                SqlKataExtensions.DefaultCompilerType = type;
                 var input = new Query("Foo");
                 var expected = new Sql($"SELECT * FROM {table}");
                 var output = input.ToSql();
@@ -41,7 +42,7 @@ namespace PetaPoco.SqlKata.Tests
             }
             finally
             {
-                SqlKataExtensions.DefaultCompiler = CompilerType.SqlServer;
+                SqlKataExtensions.DefaultCompilerType = CompilerType.SqlServer;
             }
         }
 
@@ -59,6 +60,66 @@ namespace PetaPoco.SqlKata.Tests
         {
             var input = new Query("Foo").Select("Fruit", "Vegetable");
             var expected = new Sql("SELECT [Fruit], [Vegetable] FROM [Foo]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        public class SimpleClass
+        {
+            public int ID { get; set; }
+            public string Name { get; set; }
+        }
+
+        [Fact]
+        public void GenerateSelect_SimpleType()
+        {
+            var input = new Query().GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT [ID], [Name] FROM [SimpleClass]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void GenerateSelect_SimpleType_WithFrom()
+        {
+            var input = new Query("SimpleClass").GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT [ID], [Name] FROM [SimpleClass]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void GenerateSelect_SimpleType_With_Columns()
+        {
+            var input = new Query("SimpleClass").Select("ID").GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT [ID] FROM [SimpleClass]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void GenerateSelect_With_SelectRaw()
+        {
+            var input = new Query("foo").SelectRaw("count(*)").GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT count(*) FROM [foo]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void GenerateSelect_With_From()
+        {
+            var input = new Query().From("MyOtherTable").GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT [ID], [Name] FROM [MyOtherTable]");
+            var output = input.ToSql();
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void GenerateSelect_With_FromRaw()
+        {
+            var input = new Query().FromRaw("MyOtherTable").GenerateSelect<SimpleClass>();
+            var expected = new Sql("SELECT [ID], [Name] FROM MyOtherTable");
             var output = input.ToSql();
             output.Should().BeEquivalentTo(expected);
         }
@@ -147,39 +208,70 @@ namespace PetaPoco.SqlKata.Tests
         }
 
         [Fact]
-        public void HasFrom_WithFrom_IsTrue()
-        {
-            var query = new Query("Foo").Select("fruit");
-            query.HasFrom().Should().BeTrue();
-        }
-
-        [Fact]
-        public void HasFrom_NoFrom_IsFalse()
-        {
-            var query = new Query().Select("fruit");
-            query.HasFrom().Should().BeFalse();
-        }
-
-        [Fact]
-        public void HasSelect_WithSelect_IsTrue()
-        {
-            var query = new Query("Foo").Select("fruit");
-            query.HasSelect().Should().BeTrue();
-        }
-
-        [Fact]
-        public void HasSelect_NoSelect_IsFalse()
-        {
-            var query = new Query("Foo");
-            query.HasSelect().Should().BeFalse();
-        }
-
-        [Fact]
         public void NullQuery_ShouldThrow()
         {
             Query query = null;
             Action act = () => query.ToSql();
             act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void NullCompiler_ShouldThrow()
+        {
+            var input = new Query("Foo");
+            Compiler compiler = null;
+            Action act = () => input.ToSql(compiler);
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        private void Compile_With_Percents(Func<Query, Sql> compile)
+        {
+            var input = new Query("Foo");
+            var expected = new Sql("SELECT * FROM %%Foo%%");
+            var output = compile(input);                
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Pass_Compiler_Instance()
+        {
+            Compile_With_Percents(q => q.ToSql(new PercentCompiler()));
+        }
+
+        [Fact]
+        public void Pass_Generic()
+        {
+            Compile_With_Percents(q => q.ToSql<PercentCompiler>());
+        }
+
+        [Fact]
+        public void Set_Custom_Instance()
+        {
+            try
+            {
+                SqlKataExtensions.CustomCompiler = new PercentCompiler();
+                Compile_With_Percents(q => q.ToSql());
+            }
+            finally
+            {
+                SqlKataExtensions.DefaultCompilerType = CompilerType.SqlServer;
+            }
+        }
+
+        [Fact]
+        public void Null_Custom_Instance()
+        {
+            try
+            {
+                SqlKataExtensions.DefaultCompilerType = CompilerType.Custom;
+                var input = new Query("Foo");
+                Action act = () => input.ToSql();
+                act.Should().Throw<InvalidOperationException>();
+            }
+            finally
+            {
+                SqlKataExtensions.DefaultCompilerType = CompilerType.SqlServer;
+            }
         }
     }
 }

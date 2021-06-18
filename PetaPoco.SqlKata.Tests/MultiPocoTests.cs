@@ -8,6 +8,8 @@ using FluentAssertions;
 using Moq;
 using SqlKata;
 using PetaPoco.Extensions;
+using PetaPoco.Providers;
+using PetaPoco.Core;
 
 namespace PetaPoco.SqlKata.Tests
 {
@@ -21,7 +23,8 @@ namespace PetaPoco.SqlKata.Tests
 
         public MultiPocoTests()
         {
-            _mockDb = new Mock<IDatabase>();            
+            _mockDb = new Mock<IDatabase>();
+            _mockDb.Setup(m => m.Provider).Returns(new SqlServerDatabaseProvider());
         }
 
         [Fact]
