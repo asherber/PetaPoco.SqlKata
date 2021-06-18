@@ -50,7 +50,13 @@ namespace PetaPoco.Extensions
         }
 
         private static IMapper GetMapper<T>(this IDatabase db) => Mappers.GetMapper(typeof(T), db.DefaultMapper);
-        private static Compiler GetCompiler(this IDatabase db) => db.Provider.ToCompiler();
+        private static Compiler GetCompiler(this IDatabase db)
+        {
+            if (DefaultCompilers.TryGetCustom(db.Provider, out var compiler))
+                return compiler;
+            else
+                return db.Provider.ToCompiler();
+        }
 
         /// <summary>
         ///     Runs an SQL query, returning the results as an IEnumerable collection

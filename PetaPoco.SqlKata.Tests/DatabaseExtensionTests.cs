@@ -56,7 +56,7 @@ namespace PetaPoco.SqlKata.Tests
             var output = _mockDb.Object.Query<SomeClass>(q);
             var expected = new Sql(selectText, "Bar");
 
-            _mockDb.VerifyGet(db => db.Provider, Times.Once());
+            _mockDb.VerifyGet(db => db.Provider, Times.Exactly(2));
             _mockDb.VerifyGet(db => db.DefaultMapper, Times.Once());
             _lastSql.Should().BeEquivalentTo(expected);
         }
@@ -72,6 +72,7 @@ namespace PetaPoco.SqlKata.Tests
         [Fact]
         public void First_Should_Throw()
         {
+            _mockDb.Setup(m => m.Provider).Returns(new SqlServerDatabaseProvider());
             Action act = () => _mockDb.Object.First<SomeClass>(new Query());
             act.Should().Throw<InvalidOperationException>().WithMessage("Sequence contains no elements");
         }
@@ -86,7 +87,7 @@ namespace PetaPoco.SqlKata.Tests
             var output = _mockDb.Object.Execute(q);
             var expected = new Sql(expectedSql, "Fizzbin", "Baz");
 
-            _mockDb.VerifyGet(db => db.Provider, Times.Once());
+            _mockDb.VerifyGet(db => db.Provider, Times.Exactly(2));
             _lastSql.Should().BeEquivalentTo(expected);
         }
 
@@ -104,6 +105,26 @@ namespace PetaPoco.SqlKata.Tests
             var expected = "SELECT %%Bar%% FROM %%Foo%%";
 
             _lastSql.Should().BeEquivalentTo(new Sql(expected));
+        }
+
+        [Fact]
+        public void Query_Uses_Custom_Compiler()
+        {
+            try
+            {
+                _mockDb.Setup(m => m.Provider).Returns(new MySqlDatabaseProvider());
+                DefaultCompilers.RegisterFor<MySqlDatabaseProvider>(new PercentCompiler());
+
+                var input = new Query("Foo").Select("Bar");
+                var output = _mockDb.Object.Query<SomeClass>(input);
+                var expected = "SELECT %%Bar%% FROM %%Foo%%";
+
+                _lastSql.Should().BeEquivalentTo(new Sql(expected));
+            }
+            finally
+            {
+                DefaultCompilers.RegisterFor<MySqlDatabaseProvider>(null);
+            }
         }
     }
 }

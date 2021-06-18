@@ -14,6 +14,7 @@
  *  limitations under the License.
  */
 
+using PetaPoco.Core;
 using SqlKata.Compilers;
 using System;
 using System.Collections.Generic;
@@ -23,9 +24,9 @@ using System.Threading.Tasks;
 
 namespace PetaPoco.SqlKata
 {
-    internal static class DefaultCompilers
+    public static class DefaultCompilers
     {
-        private static readonly Dictionary<CompilerType, Lazy<Compiler>> _compilers = new Dictionary<CompilerType, Lazy<Compiler>>()
+        private static readonly Dictionary<CompilerType, Lazy<Compiler>> _defaults = new Dictionary<CompilerType, Lazy<Compiler>>()
         {
             { CompilerType.SqlServer, new Lazy<Compiler>(() => new SqlServerCompiler()) },
             { CompilerType.MySql, new Lazy<Compiler>(() => new MySqlCompiler()) },
@@ -35,12 +36,54 @@ namespace PetaPoco.SqlKata
             { CompilerType.Oracle, new Lazy<Compiler>(() => new OracleCompiler()) },
         };
 
-        public static Compiler Get(CompilerType type)
+        private static readonly Dictionary<Type, Compiler> _custom = new Dictionary<Type, Compiler>();
+
+        internal static Compiler Get(CompilerType type)
         {
-            if (_compilers.TryGetValue(type, out var result))
+            if (_defaults.TryGetValue(type, out var result))
                 return result.Value;
             else
                 throw new ArgumentException($"No compiler found for type '{type}'.");
+        }
+
+        internal static bool TryGetCustom(IProvider provider, out Compiler compiler)
+        {
+            provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            return TryGetCustom(provider.GetType(), out compiler);
+        }
+
+        internal static bool TryGetCustom(Type providerType, out Compiler compiler)
+        {
+            providerType = providerType ?? throw new ArgumentNullException(nameof(providerType));
+            return _custom.TryGetValue(providerType, out compiler);
+        }
+
+        /// <summary>
+        /// Register a custom SqlKata <seealso cref="Compiler"/> for a given PetaPoco <seealso cref="IProvider"/>.
+        /// This compiler will be used in place of any default for the provider.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="compiler"></param>
+        public static void RegisterFor<T>(Compiler compiler) where T : IProvider
+        {
+            RegisterFor(typeof(T), compiler);
+        }
+
+        /// <summary>
+        /// Register a custom SqlKata <seealso cref="Compiler"/> for a given PetaPoco <seealso cref="IProvider"/>.
+        /// This compiler will be used in place of any default for the provider.
+        /// </summary>
+        /// <param name="providerType"></param>
+        /// <param name="compiler"></param>
+        public static void RegisterFor(Type providerType, Compiler compiler)
+        {
+            if (!typeof(IProvider).IsAssignableFrom(providerType))
+                throw new ArgumentException($"Type '{providerType}' does not implement IProvider.", nameof(providerType));
+            
+            if (compiler != null)
+                _custom[providerType] = compiler;
+            else if (_custom.ContainsKey(providerType))
+                _custom.Remove(providerType);
         }
     }
 }

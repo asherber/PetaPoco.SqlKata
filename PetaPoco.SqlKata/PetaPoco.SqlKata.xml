@@ -431,6 +431,22 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as an IEnumerable</returns>
         </member>
+        <member name="M:PetaPoco.SqlKata.DefaultCompilers.RegisterFor``1(SqlKata.Compilers.Compiler)">
+            <summary>
+            Register a custom SqlKata <seealso cref="T:SqlKata.Compilers.Compiler"/> for a given PetaPoco <seealso cref="T:PetaPoco.Core.IProvider"/>.
+            This compiler will be used in place of any default for the provider.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="compiler"></param>
+        </member>
+        <member name="M:PetaPoco.SqlKata.DefaultCompilers.RegisterFor(System.Type,SqlKata.Compilers.Compiler)">
+            <summary>
+            Register a custom SqlKata <seealso cref="T:SqlKata.Compilers.Compiler"/> for a given PetaPoco <seealso cref="T:PetaPoco.Core.IProvider"/>.
+            This compiler will be used in place of any default for the provider.
+            </summary>
+            <param name="providerType"></param>
+            <param name="compiler"></param>
+        </member>
         <member name="P:PetaPoco.SqlKata.SqlKataExtensions.DefaultCompilerType">
             <summary>
             Indicates the <seealso cref="T:SqlKata.Compilers.Compiler"/> that gets used when one is not specified.
