@@ -37,6 +37,7 @@ namespace PetaPoco.SqlKata
     {
         private static CompilerType _defaultCompilerType = CompilerType.SqlServer;
         private static Compiler _customCompiler;
+        private readonly static object _compilerLock = new object();
 
         /// <summary>
         /// Indicates the <seealso cref="Compiler"/> that gets used when one is not specified.
@@ -47,12 +48,15 @@ namespace PetaPoco.SqlKata
             get => _defaultCompilerType;
             set
             {
-                if (value != _defaultCompilerType && value != CompilerType.Custom)
+                lock (_compilerLock)
                 {
-                    _customCompiler = null;
-                }
+                    if (value != _defaultCompilerType && value != CompilerType.Custom)
+                    {
+                        _customCompiler = null;
+                    }
 
-                _defaultCompilerType = value;
+                    _defaultCompilerType = value;
+                }
             }
         }
 
@@ -67,12 +71,15 @@ namespace PetaPoco.SqlKata
             get => _customCompiler; 
             set 
             {
-                if (value != null)
+                lock (_compilerLock)
                 {
-                    _defaultCompilerType = CompilerType.Custom;
-                }
+                    if (value != null)
+                    {
+                        _defaultCompilerType = CompilerType.Custom;
+                    }
 
-                _customCompiler = value;                 
+                    _customCompiler = value;
+                }
             } 
         }
 

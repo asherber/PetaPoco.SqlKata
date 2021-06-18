@@ -17,6 +17,7 @@
 using PetaPoco.Core;
 using SqlKata.Compilers;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,7 +37,7 @@ namespace PetaPoco.SqlKata
             { CompilerType.Oracle, new Lazy<Compiler>(() => new OracleCompiler()) },
         };
 
-        private static readonly Dictionary<Type, Compiler> _custom = new Dictionary<Type, Compiler>();
+        private static readonly ConcurrentDictionary<Type, Compiler> _custom = new ConcurrentDictionary<Type, Compiler>();
 
         internal static Compiler Get(CompilerType type)
         {
@@ -83,7 +84,7 @@ namespace PetaPoco.SqlKata
             if (compiler != null)
                 _custom[providerType] = compiler;
             else if (_custom.ContainsKey(providerType))
-                _custom.Remove(providerType);
+                _custom.TryRemove(providerType, out var _);
         }
     }
 }
