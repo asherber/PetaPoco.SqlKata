@@ -17,12 +17,35 @@
                 returns the results as a List rather than an IEnumerable.
             </remarks>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Runs an SQL query, returning the results as an IEnumerable collection
+            </summary>
+            <typeparam name="T">The Type representing a row in the result set</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>An enumerable collection of result records</returns>
+            <remarks>
+                For some DB providers, care should be taken to not start a new Query before finishing with
+                and disposing the previous one. In cases where this is an issue, consider using Fetch which
+                returns the results as a List rather than an IEnumerable.
+            </remarks>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``1(PetaPoco.IDatabase,SqlKata.Query)">
             <summary>
                 Runs a query and returns the result set as a typed list
             </summary>
             <typeparam name="T">The Type representing a row in the result set</typeparam>
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the query and its arguments</param>
+            <returns>A List holding the results of the query</returns>
+        </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``1(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Runs a query and returns the result set as a typed list
+            </summary>
+            <typeparam name="T">The Type representing a row in the result set</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the query and its arguments</param>
+            <param name="compiler"></param>
             <returns>A List holding the results of the query</returns>
         </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.First``1(PetaPoco.IDatabase,SqlKata.Query)">
@@ -33,6 +56,15 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the query and its arguments</param>
             <returns>The first record in the result set</returns>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.First``1(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Runs a query that should always return at least one row
+            </summary>
+            <typeparam name="T">The Type representing a row in the result set</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>The first record in the result set</returns>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.FirstOrDefault``1(PetaPoco.IDatabase,SqlKata.Query)">
             <summary>
                 Runs a query and returns the first record, or the default value if no matching records
@@ -41,11 +73,28 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the query and its arguments</param>
             <returns>The first record in the result set, or default(T) if no matching records</returns>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.FirstOrDefault``1(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Runs a query and returns the first record, or the default value if no matching records
+            </summary>
+            <typeparam name="T">The Type representing a row in the result set</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>The first record in the result set, or default(T) if no matching records</returns>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Execute(PetaPoco.IDatabase,SqlKata.Query)">
             <summary>
                 Executes a non-query command
             </summary>
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the query and its arguments</param>
+            <returns>The number of rows affected</returns>
+        </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Execute(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Executes a non-query command
+            </summary>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the query and its arguments</param>
+            <param name="compiler"></param>
             <returns>The number of rows affected</returns>
         </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.ExecuteScalar``1(PetaPoco.IDatabase,SqlKata.Query)">
@@ -56,12 +105,34 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the query and its arguments</param>
             <returns>The scalar value cast to T</returns>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.ExecuteScalar``1(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Executes a query and return the first column of the first row in the result set.
+            </summary>
+            <typeparam name="T">The type that the result value should be cast to</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>The scalar value cast to T</returns>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Page``1(PetaPoco.IDatabase,System.Int64,System.Int64,SqlKata.Query)">
             <summary>
                 Retrieves a range of records from result set
             </summary>
             <typeparam name="T">The Type representing a row in the result set</typeparam>
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <returns>A List of results</returns>
+            <remarks>
+                PetaPoco will automatically modify the supplied SELECT statement to only retrieve the
+                records for the specified range.
+            </remarks>
+        </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Page``1(PetaPoco.IDatabase,System.Int64,System.Int64,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Retrieves a range of records from result set
+            </summary>
+            <typeparam name="T">The Type representing a row in the result set</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
             <returns>A List of results</returns>
             <remarks>
                 PetaPoco will automatically modify the supplied SELECT statement to only retrieve the
@@ -82,6 +153,21 @@
                 records for the specified range.
             </remarks>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.SkipTake``1(PetaPoco.IDatabase,System.Int64,System.Int64,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Retrieves a range of records from result set
+            </summary>
+            <typeparam name="T">The Type representing a row in the result set</typeparam>
+            <param name="skip">The number of rows at the start of the result set to skip over</param>
+            <param name="take">The number of rows to retrieve</param>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>A List of results</returns>
+            <remarks>
+                PetaPoco will automatically modify the supplied SELECT statement to only retrieve the
+                records for the specified range.
+            </remarks>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.QueryMultiple(PetaPoco.IDatabase,SqlKata.Query)">
             <summary>
                 Perform a multi-results set query
@@ -89,6 +175,7 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A GridReader to be queried</returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:PetaPoco.Extensions.DatabaseExtensions.QueryMultiple(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)" -->
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``3(PetaPoco.IDatabase,System.Func{``0,``1,``2},SqlKata.Query)">
             <summary>
                 Perform a multi-poco fetch
@@ -98,6 +185,18 @@
             <typeparam name="TRet">The returned list POCO type</typeparam>
             <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <returns>A collection of POCOs as a List</returns>
+        </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``3(PetaPoco.IDatabase,System.Func{``0,``1,``2},SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco fetch
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="TRet">The returned list POCO type</typeparam>
+            <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
             <returns>A collection of POCOs as a List</returns>
         </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``4(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3},SqlKata.Query)">
@@ -112,6 +211,19 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as a List</returns>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``4(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3},SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco fetch
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <typeparam name="TRet">The returned list POCO type</typeparam>
+            <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>A collection of POCOs as a List</returns>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``5(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3,``4},SqlKata.Query)">
             <summary>
                 Perform a multi-poco fetch
@@ -123,6 +235,20 @@
             <typeparam name="TRet">The returned list POCO type</typeparam>
             <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <returns>A collection of POCOs as a List</returns>
+        </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``5(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3,``4},SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco fetch
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <typeparam name="T4">The fourth POCO type</typeparam>
+            <typeparam name="TRet">The returned list POCO type</typeparam>
+            <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
             <returns>A collection of POCOs as a List</returns>
         </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``6(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3,``4,``5},SqlKata.Query)">
@@ -139,6 +265,7 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as a List</returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:PetaPoco.Extensions.DatabaseExtensions.Fetch``6(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3,``4,``5},SqlKata.Query,SqlKata.Compilers.Compiler)" -->
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``3(PetaPoco.IDatabase,System.Func{``0,``1,``2},SqlKata.Query)">
             <summary>
                 Perform a multi-poco query
@@ -150,7 +277,31 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as an IEnumerable</returns>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``3(PetaPoco.IDatabase,System.Func{``0,``1,``2},SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco query
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="TRet">The type of objects in the returned IEnumerable</typeparam>
+            <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>A collection of POCOs as an IEnumerable</returns>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``4(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3},SqlKata.Query)">
+            <summary>
+                Perform a multi-poco query
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <typeparam name="TRet">The type of objects in the returned IEnumerable</typeparam>
+            <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <returns>A collection of POCOs as an IEnumerable</returns>
+        </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``4(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3},SqlKata.Query,SqlKata.Compilers.Compiler)">
             <summary>
                 Perform a multi-poco query
             </summary>
@@ -175,6 +326,20 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as an IEnumerable</returns>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``5(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3,``4},SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco query
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <typeparam name="T4">The fourth POCO type</typeparam>
+            <typeparam name="TRet">The type of objects in the returned IEnumerable</typeparam>
+            <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>A collection of POCOs as an IEnumerable</returns>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``6(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3,``4,``5},SqlKata.Query)">
             <summary>
                 Perform a multi-poco query
@@ -189,6 +354,21 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as an IEnumerable</returns>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``6(PetaPoco.IDatabase,System.Func{``0,``1,``2,``3,``4,``5},SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco query
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <typeparam name="T4">The fourth POCO type</typeparam>
+            <typeparam name="T5">The fifth POCO type</typeparam>
+            <typeparam name="TRet">The type of objects in the returned IEnumerable</typeparam>
+            <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>A collection of POCOs as an IEnumerable</returns>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``2(PetaPoco.IDatabase,SqlKata.Query)">
             <summary>
                 Perform a multi-poco fetch
@@ -196,6 +376,16 @@
             <typeparam name="T1">The first POCO type</typeparam>
             <typeparam name="T2">The second POCO type</typeparam>
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <returns>A collection of POCOs as a List</returns>
+        </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``2(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco fetch
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
             <returns>A collection of POCOs as a List</returns>
         </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``3(PetaPoco.IDatabase,SqlKata.Query)">
@@ -208,6 +398,17 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as a List</returns>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``3(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco fetch
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>A collection of POCOs as a List</returns>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``4(PetaPoco.IDatabase,SqlKata.Query)">
             <summary>
                 Perform a multi-poco fetch
@@ -217,6 +418,18 @@
             <typeparam name="T3">The third POCO type</typeparam>
             <typeparam name="T4">The fourth POCO type</typeparam>
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <returns>A collection of POCOs as a List</returns>
+        </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``4(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco fetch
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <typeparam name="T4">The fourth POCO type</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
             <returns>A collection of POCOs as a List</returns>
         </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``5(PetaPoco.IDatabase,SqlKata.Query)">
@@ -231,6 +444,19 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as a List</returns>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Fetch``5(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco fetch
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <typeparam name="T4">The fourth POCO type</typeparam>
+            <typeparam name="T5">The fourth POCO type</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>A collection of POCOs as a List</returns>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``2(PetaPoco.IDatabase,SqlKata.Query)">
             <summary>
                 Perform a multi-poco query
@@ -238,6 +464,16 @@
             <typeparam name="T1">The first POCO type</typeparam>
             <typeparam name="T2">The second POCO type</typeparam>
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <returns>A collection of POCOs as an IEnumerable</returns>
+        </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``2(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco query
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
             <returns>A collection of POCOs as an IEnumerable</returns>
         </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``3(PetaPoco.IDatabase,SqlKata.Query)">
@@ -250,6 +486,17 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as an IEnumerable</returns>
         </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``3(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco query
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
+            <returns>A collection of POCOs as an IEnumerable</returns>
+        </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``4(PetaPoco.IDatabase,SqlKata.Query)">
             <summary>
                 Perform a multi-poco query
@@ -259,6 +506,18 @@
             <typeparam name="T3">The third POCO type</typeparam>
             <typeparam name="T4">The fourth POCO type</typeparam>
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <returns>A collection of POCOs as an IEnumerable</returns>
+        </member>
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``4(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+                Perform a multi-poco query
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <typeparam name="T4">The fourth POCO type</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <param name="compiler"></param>
             <returns>A collection of POCOs as an IEnumerable</returns>
         </member>
         <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``5(PetaPoco.IDatabase,SqlKata.Query)">
@@ -273,10 +532,43 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as an IEnumerable</returns>
         </member>
-        <member name="P:PetaPoco.SqlKata.SqlKataExtensions.DefaultCompiler">
+        <member name="M:PetaPoco.Extensions.DatabaseExtensions.Query``5(PetaPoco.IDatabase,SqlKata.Query,SqlKata.Compilers.Compiler)">
             <summary>
-            Indicates the compiler that gets used when one is not specified.
+                Perform a multi-poco query
+            </summary>
+            <typeparam name="T1">The first POCO type</typeparam>
+            <typeparam name="T2">The second POCO type</typeparam>
+            <typeparam name="T3">The third POCO type</typeparam>
+            <typeparam name="T4">The fourth POCO type</typeparam>
+            <typeparam name="T5">The fifth POCO type</typeparam>
+            <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
+            <returns>A collection of POCOs as an IEnumerable</returns>
+        </member>
+        <member name="M:PetaPoco.SqlKata.DefaultCompilers.RegisterFor``1(SqlKata.Compilers.Compiler)">
+            <summary>
+            Register a custom SqlKata <seealso cref="T:SqlKata.Compilers.Compiler"/> for a given PetaPoco <seealso cref="T:PetaPoco.Core.IProvider"/>.
+            This compiler will be used in place of any default for the provider.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="compiler"></param>
+        </member>
+        <member name="M:PetaPoco.SqlKata.DefaultCompilers.RegisterFor(System.Type,SqlKata.Compilers.Compiler)">
+            <summary>
+            Register a custom SqlKata <seealso cref="T:SqlKata.Compilers.Compiler"/> for a given PetaPoco <seealso cref="T:PetaPoco.Core.IProvider"/>.
+            This compiler will be used in place of any default for the provider.
+            </summary>
+            <param name="providerType"></param>
+            <param name="compiler"></param>
+        </member>
+        <member name="P:PetaPoco.SqlKata.SqlKataExtensions.DefaultCompilerType">
+            <summary>
+            Indicates the <seealso cref="T:SqlKata.Compilers.Compiler"/> that gets used when one is not specified.
             Defaults to SqlServer.
+            </summary>
+        </member>
+        <member name="P:PetaPoco.SqlKata.SqlKataExtensions.CustomCompiler">
+            <summary>
+            A custom <seealso cref="T:SqlKata.Compilers.Compiler"/> instance to use when one is not specified.
             </summary>
         </member>
         <member name="P:PetaPoco.SqlKata.SqlKataExtensions.DefaultMapper">
@@ -299,6 +591,22 @@
             </summary>
             <param name="query"></param>
             <param name="compilerType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PetaPoco.SqlKata.SqlKataExtensions.ToSql``1(SqlKata.Query)">
+            <summary>
+            Convert a <seealso cref="T:SqlKata.Query"/> object to a <seealso cref="T:PetaPoco.Sql" /> object.
+            </summary>
+            <typeparam name="T">Type of <seealso cref="T:SqlKata.Compilers.Compiler"/> to use.</typeparam>
+            <param name="query"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PetaPoco.SqlKata.SqlKataExtensions.ToSql(SqlKata.Query,SqlKata.Compilers.Compiler)">
+            <summary>
+            Convert a <seealso cref="T:SqlKata.Query"/> object to a <seealso cref="T:PetaPoco.Sql" /> object.
+            </summary>
+            <param name="query"></param>
+            <param name="compiler"></param>
             <returns></returns>
         </member>
         <member name="M:PetaPoco.SqlKata.SqlKataExtensions.ForType``1(SqlKata.Query)">

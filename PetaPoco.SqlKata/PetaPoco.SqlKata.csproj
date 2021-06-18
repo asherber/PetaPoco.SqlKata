@@ -6,7 +6,7 @@
     <RootNamespace>PetaPoco.SqlKata</RootNamespace>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Authors>Aaron Sherber</Authors>
-    <Copyright>2018-2020</Copyright>
+    <Copyright>2018-2021</Copyright>
     <PackageTags>petapoco sqlkata sql query builder</PackageTags>
     <Company />
     <Description>Extension methods for using SqlKata to generate SQL queries for PetaPoco.</Description>
@@ -15,7 +15,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageReleaseNotes>Requires v2 of SqlKata; the assembly name changed in this version from QueryBuilder.dll to SqlKata.dll.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added ability to specify a custom controller.</PackageReleaseNotes>
   </PropertyGroup>
   
   <PropertyGroup>
