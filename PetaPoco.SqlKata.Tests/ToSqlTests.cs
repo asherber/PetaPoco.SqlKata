@@ -34,7 +34,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             try
             {
-                SqlKataExtensions.DefaultCompiler = type;
+                SqlKataExtensions.DefaultCompilerType = type;
                 var input = new Query("Foo");
                 var expected = new Sql($"SELECT * FROM {table}");
                 var output = input.ToSql();
@@ -42,7 +42,7 @@ namespace PetaPoco.SqlKata.Tests
             }
             finally
             {
-                SqlKataExtensions.DefaultCompiler = CompilerType.SqlServer;
+                SqlKataExtensions.DefaultCompilerType = CompilerType.SqlServer;
             }
         }
 
@@ -262,7 +262,7 @@ namespace PetaPoco.SqlKata.Tests
             }
             finally
             {
-                SqlKataExtensions.DefaultCompiler = CompilerType.SqlServer;
+                SqlKataExtensions.DefaultCompilerType = CompilerType.SqlServer;
             }
         }
 
@@ -271,14 +271,14 @@ namespace PetaPoco.SqlKata.Tests
         {
             try
             {
-                SqlKataExtensions.DefaultCompiler = CompilerType.Custom;
+                SqlKataExtensions.DefaultCompilerType = CompilerType.Custom;
                 var input = new Query("Foo");
                 Action act = () => input.ToSql();
                 act.Should().Throw<InvalidOperationException>();
             }
             finally
             {
-                SqlKataExtensions.DefaultCompiler = CompilerType.SqlServer;
+                SqlKataExtensions.DefaultCompilerType = CompilerType.SqlServer;
             }
         }
     }

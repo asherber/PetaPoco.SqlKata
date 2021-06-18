@@ -273,7 +273,7 @@
             <param name="query">A SqlKata <seealso cref="M:PetaPoco.Extensions.DatabaseExtensions.Query``1(PetaPoco.IDatabase,SqlKata.Query)"/> representing the base SQL query and its arguments</param>
             <returns>A collection of POCOs as an IEnumerable</returns>
         </member>
-        <member name="P:PetaPoco.SqlKata.SqlKataExtensions.DefaultCompiler">
+        <member name="P:PetaPoco.SqlKata.SqlKataExtensions.DefaultCompilerType">
             <summary>
             Indicates the <seealso cref="T:SqlKata.Compilers.Compiler"/> that gets used when one is not specified.
             Defaults to SqlServer.

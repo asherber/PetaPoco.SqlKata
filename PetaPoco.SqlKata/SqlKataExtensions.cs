@@ -35,36 +35,29 @@ namespace PetaPoco.SqlKata
 
     public static class SqlKataExtensions
     {
-        private static readonly Dictionary<CompilerType, Lazy<Compiler>> _compilers = new Dictionary<CompilerType, Lazy<Compiler>>()
-        {
-            { CompilerType.SqlServer, new Lazy<Compiler>(() => new SqlServerCompiler()) },
-            { CompilerType.MySql, new Lazy<Compiler>(() => new MySqlCompiler()) },
-            { CompilerType.Postgres, new Lazy<Compiler>(() => new PostgresCompiler()) },
-            { CompilerType.Firebird, new Lazy<Compiler>(() => new FirebirdCompiler()) },
-            { CompilerType.SQLite, new Lazy<Compiler>(() => new SqliteCompiler()) },
-            { CompilerType.Oracle, new Lazy<Compiler>(() => new OracleCompiler()) },            
-        };
-
-        private static CompilerType _defaultCompiler = CompilerType.SqlServer;
+        private static CompilerType _defaultCompilerType = CompilerType.SqlServer;
         private static Compiler _customCompiler;
 
         /// <summary>
         /// Indicates the <seealso cref="Compiler"/> that gets used when one is not specified.
         /// Defaults to SqlServer.
         /// </summary>
-        public static CompilerType DefaultCompiler
+        public static CompilerType DefaultCompilerType
         {
-            get => _defaultCompiler;
+            get => _defaultCompilerType;
             set
             {
-                if (value != _defaultCompiler && value != CompilerType.Custom)
+                if (value != _defaultCompilerType && value != CompilerType.Custom)
                 {
                     _customCompiler = null;
                 }
 
-                _defaultCompiler = value;
+                _defaultCompilerType = value;
             }
         }
+
+        [Obsolete("Use DefaultCompilerType instead.")]
+        public static CompilerType DefaultCompiler { get => DefaultCompilerType; set => DefaultCompilerType = value; }
 
         /// <summary>
         /// A custom <seealso cref="Compiler"/> instance to use when one is not specified.
@@ -76,7 +69,7 @@ namespace PetaPoco.SqlKata
             {
                 if (value != null)
                 {
-                    _defaultCompiler = CompilerType.Custom;
+                    _defaultCompilerType = CompilerType.Custom;
                 }
 
                 _customCompiler = value;                 
@@ -95,7 +88,7 @@ namespace PetaPoco.SqlKata
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
-        public static Sql ToSql(this Query query) => query.ToSql(DefaultCompiler);
+        public static Sql ToSql(this Query query) => query.ToSql(DefaultCompilerType);
 
         /// <summary>
         /// Convert a <seealso cref="Query"/> object to a <seealso cref="Sql" /> object.
@@ -113,7 +106,7 @@ namespace PetaPoco.SqlKata
             }
             else
             {
-                compiler = _compilers[compilerType].Value;
+                compiler = DefaultCompilers.Get(compilerType);
             }
 
             return query.ToSql(compiler);
