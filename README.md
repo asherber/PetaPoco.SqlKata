@@ -1,6 +1,6 @@
-![Icon](https://github.com/asherber/PetaPoco.SqlKata/raw/master/media/database-64.png)
+	![Icon](https://github.com/asherber/PetaPoco.SqlKata/raw/master/media/database-64.png)
 
-# PetaPoco.SqlKata [![NuGet](https://img.shields.io/nuget/v/PetaPoco.SqlKata.svg)](https://nuget.org/packages/PetaPoco.SqlKata) [![.NET Core](https://github.com/asherber/PetaPoco.SqlKata/workflows/.NET%20Core/badge.svg)](https://nuget.org/packages/PetaPoco.SqlKata)
+# PetaPoco.SqlKata [![NuGet](https://img.shields.io/nuget/v/PetaPoco.SqlKata.svg)](https://nuget.org/packages/PetaPoco.SqlKata) [![.NET Core](https://github.com/asherber/PetaPoco.SqlKata/actions/workflows/dotnet.yml/badge.svg)](https://nuget.org/packages/PetaPoco.SqlKata)
 
 [PetaPoco](https://github.com/CollaboratingPlatypus/PetaPoco) is a handy micro-ORM, but the SQL builder that comes with it is extremely limited. This library lets you use [SqlKata](https://sqlkata.com) as a replacement query builder.
 
@@ -9,8 +9,6 @@
 ### Basic
 
 The simplest way to use this library is just to use a SqlKata `Query` object in place of a PetaPoco `Sql` object. There are extension methods on `IDatabase` which allow this for most of the basic query methods.
-
-Note that there are no extension methods for `Single()` or `SingleOrDefault()`. This is because one of the overloads available in PetaPoco takes an `object` parameter, and this overload will resolve before an extension method with a more specific parameter type. The workaround is to use `db.Query().Single()`.
 
 ```csharp
 public class MyTable
@@ -27,7 +25,9 @@ using (var db = new PetaPoco.Database(...))
 }
 ```
 
-Note that SqlKata requires a table name in order to render a query natively. However, this library can autogenerate the `SELECT` and `FROM` clauses from the target class, just like the PetaPoco `EnableAutoSelect` feature. 
+Note that there are no extension methods for `Single()` or `SingleOrDefault()`. This is because one of the overloads available in PetaPoco takes an `object` parameter, and this overload will resolve before an extension method with a more specific parameter type. The workaround is to use `db.Query().Single()`.
+
+While SqlKata does requires a table name in order to render a query natively, this library can autogenerate the `SELECT` and `FROM` clauses from the target class, just like the PetaPoco `EnableAutoSelect` feature. 
 
 ```csharp
 // This is equivalent to the example above.
@@ -41,7 +41,7 @@ using (var db = new PetaPoco.Database(...))
 
 ### Advanced
 
-There are two other types of methods provided in this library which give you more control over how the SQL is generated. 
+There are other types of methods provided in this library which give you more control over how the SQL is generated. 
 
 #### ToSql()
 
@@ -55,19 +55,46 @@ var query = new Query("MyTable")
 var sql = query.ToSql();
 ```
 
+#### Custom Compilers
+
 Transforming a SqlKata `Query` into a SQL string (and then into a `Sql` object) requires a compiler. SqlKata comes with compilers for SQL Server, Postgres, MySql, Firebird, Oracle, and SQLite. For many simple queries, the generated SQL looks the same regardless of which compiler you use, but for certain queries the compiler will produce SQL tailored for that specific database. The compilers also know which characters to use to escape identifiers.
 
-By default, `ToSql()` uses the SQL Server compiler. If you want to use a different compiler, there are a couple of different ways you can do so.
+By default, `ToSql()` uses the SQL Server compiler. If you want to use a different compiler, there are a few different ways you can do so.
 
 ```csharp
 // Specify the compiler for one SQL statement
 var sql = query.ToSql(CompilerType.MySql);
 
+// Specify a custom compiler for one SQL statement
+var sql = query.ToSql<MyCompiler>();
+// or
+var sql = query.ToSql(new MyCompiler());
+
 // Change the default compiler for all SQL statements
-SqlKataExtensions.DefaultCompiler = CompilerType.Postgres;
+SqlKataExtensions.DefaultCompilerType = CompilerType.Postgres;
+
+// Provide a custom compiler for all SQL statements
+SqlKataExtensions.CustomCompiler = new MyCompiler();
 ```
 
-The `IDatabase` extension methods (see **Basic**, above) automatically pick a compiler based on the database's `Provider`. They do not use the `DefaultCompiler` property.
+Note that the `IDatabase` extension methods (see **Basic**, above) automatically pick a compiler based on the database's `Provider`. They do not use the `DefaultCompilerType` property. But you can still pass in a custom compiler if you want, or you can register a custom compiler to be used with a given `Provider`.
+
+```csharp
+var query = new Query("MyTable")
+    .Select("Field1", "Field2")
+    .Where("Foo", "Bar");
+
+using (var db = new PetaPoco.Database(...))
+{
+    var records = db.Query<MyTable>(query, new MyCompiler());
+    
+    // or register MyCompiler as the default for your Provider
+    DefaultCompilers.RegisterFor(db.Provider, new MyCompiler());
+    var records = db.Query<MyTable>(query);  // same result as above
+}
+```
+
+
 
 #### Generate from POCO
 

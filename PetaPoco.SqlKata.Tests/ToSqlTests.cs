@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 using FluentAssertions;
+using SqlKata.Compilers;
 
 namespace PetaPoco.SqlKata.Tests
 {
@@ -33,7 +34,7 @@ namespace PetaPoco.SqlKata.Tests
         {
             try
             {
-                SqlKataExtensions.DefaultCompiler = type;
+                SqlKataExtensions.DefaultCompilerType = type;
                 var input = new Query("Foo");
                 var expected = new Sql($"SELECT * FROM {table}");
                 var output = input.ToSql();
@@ -41,7 +42,7 @@ namespace PetaPoco.SqlKata.Tests
             }
             finally
             {
-                SqlKataExtensions.DefaultCompiler = CompilerType.SqlServer;
+                SqlKataExtensions.DefaultCompilerType = CompilerType.SqlServer;
             }
         }
 
@@ -212,6 +213,65 @@ namespace PetaPoco.SqlKata.Tests
             Query query = null;
             Action act = () => query.ToSql();
             act.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public void NullCompiler_ShouldThrow()
+        {
+            var input = new Query("Foo");
+            Compiler compiler = null;
+            Action act = () => input.ToSql(compiler);
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        private void Compile_With_Percents(Func<Query, Sql> compile)
+        {
+            var input = new Query("Foo");
+            var expected = new Sql("SELECT * FROM %%Foo%%");
+            var output = compile(input);                
+            output.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Pass_Compiler_Instance()
+        {
+            Compile_With_Percents(q => q.ToSql(new PercentCompiler()));
+        }
+
+        [Fact]
+        public void Pass_Generic()
+        {
+            Compile_With_Percents(q => q.ToSql<PercentCompiler>());
+        }
+
+        [Fact]
+        public void Set_Custom_Instance()
+        {
+            try
+            {
+                SqlKataExtensions.CustomCompiler = new PercentCompiler();
+                Compile_With_Percents(q => q.ToSql());
+            }
+            finally
+            {
+                SqlKataExtensions.DefaultCompilerType = CompilerType.SqlServer;
+            }
+        }
+
+        [Fact]
+        public void Null_Custom_Instance()
+        {
+            try
+            {
+                SqlKataExtensions.DefaultCompilerType = CompilerType.Custom;
+                var input = new Query("Foo");
+                Action act = () => input.ToSql();
+                act.Should().Throw<InvalidOperationException>();
+            }
+            finally
+            {
+                SqlKataExtensions.DefaultCompilerType = CompilerType.SqlServer;
+            }
         }
     }
 }
