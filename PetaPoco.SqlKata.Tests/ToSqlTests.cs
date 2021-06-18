@@ -224,14 +224,6 @@ namespace PetaPoco.SqlKata.Tests
             act.Should().Throw<ArgumentNullException>();
         }
 
-        public class PercentCompiler : Compiler
-        {
-            public PercentCompiler()
-            {
-                OpeningIdentifier = ClosingIdentifier = "%%";
-            }
-        }
-
         private void Compile_With_Percents(Func<Query, Sql> compile)
         {
             var input = new Query("Foo");

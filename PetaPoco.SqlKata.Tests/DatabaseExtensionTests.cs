@@ -95,5 +95,15 @@ namespace PetaPoco.SqlKata.Tests
             new object[] { new MySqlDatabaseProvider(), "UPDATE `Foo` SET `Bar` = @0 WHERE `Bar` = @1" },
             new object[] { new SqlServerDatabaseProvider(), "UPDATE [Foo] SET [Bar] = @0 WHERE [Bar] = @1"},
         };
+
+        [Fact]
+        public void Query_Uses_Explicit_Compiler()
+        {
+            var input = new Query("Foo").Select("Bar");
+            var output = _mockDb.Object.Query<SomeClass>(input, new PercentCompiler());
+            var expected = "SELECT %%Bar%% FROM %%Foo%%";
+
+            _lastSql.Should().BeEquivalentTo(new Sql(expected));
+        }
     }
 }
