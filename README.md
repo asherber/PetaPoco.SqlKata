@@ -1,4 +1,4 @@
-	![Icon](https://github.com/asherber/PetaPoco.SqlKata/raw/master/media/database-64.png)
+![Icon](https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png)
 
 # PetaPoco.SqlKata [![NuGet](https://img.shields.io/nuget/v/PetaPoco.SqlKata.svg)](https://nuget.org/packages/PetaPoco.SqlKata) [![.NET Core](https://github.com/asherber/PetaPoco.SqlKata/actions/workflows/dotnet.yml/badge.svg)](https://nuget.org/packages/PetaPoco.SqlKata)
 
