@@ -50,6 +50,7 @@ namespace PetaPoco.Extensions
         }
 
         private static IMapper GetMapper<T>(this IDatabase db) => Mappers.GetMapper(typeof(T), db.DefaultMapper);
+
         private static Compiler GetCompiler(this IDatabase db)
         {
             if (DefaultCompilers.TryGetCustom(db.Provider, out var compiler))
@@ -104,6 +105,18 @@ namespace PetaPoco.Extensions
         }
 
         /// <summary>
+        ///     Runs a query and returns the result set as a typed list
+        /// </summary>
+        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
+        /// <param name="compiler"></param>
+        /// <returns>A List holding the results of the query</returns>
+        public static List<T> Fetch<T>(this IDatabase db, Query query, Compiler compiler)
+        {
+            return db.Query<T>(query, compiler).ToList();
+        }
+
+        /// <summary>
         ///     Runs a query that should always return at least one row
         /// </summary>
         /// <typeparam name="T">The Type representing a row in the result set</typeparam>
@@ -115,6 +128,18 @@ namespace PetaPoco.Extensions
         }
 
         /// <summary>
+        ///     Runs a query that should always return at least one row
+        /// </summary>
+        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
+        /// <param name="compiler"></param>
+        /// <returns>The first record in the result set</returns>
+        public static T First<T>(this IDatabase db, Query query, Compiler compiler)
+        {
+            return db.Query<T>(query, compiler).First();
+        }
+
+        /// <summary>
         ///     Runs a query and returns the first record, or the default value if no matching records
         /// </summary>
         /// <typeparam name="T">The Type representing a row in the result set</typeparam>
@@ -123,6 +148,18 @@ namespace PetaPoco.Extensions
         public static T FirstOrDefault<T>(this IDatabase db, Query query)
         {
             return db.Query<T>(query).FirstOrDefault();
+        }
+
+        /// <summary>
+        ///     Runs a query and returns the first record, or the default value if no matching records
+        /// </summary>
+        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the query and its arguments</param>
+        /// <param name="compiler"></param>
+        /// <returns>The first record in the result set, or default(T) if no matching records</returns>
+        public static T FirstOrDefault<T>(this IDatabase db, Query query, Compiler compiler)
+        {
+            return db.Query<T>(query, compiler).FirstOrDefault();
         }
 
         /// <summary>
@@ -279,6 +316,21 @@ namespace PetaPoco.Extensions
         /// </summary>
         /// <typeparam name="T1">The first POCO type</typeparam>
         /// <typeparam name="T2">The second POCO type</typeparam>
+        /// <typeparam name="TRet">The returned list POCO type</typeparam>
+        /// <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
+        /// <param name="compiler"></param>
+        /// <returns>A collection of POCOs as a List</returns>
+        public static List<TRet> Fetch<T1, T2, TRet>(this IDatabase db, Func<T1, T2, TRet> cb, Query query, Compiler compiler)
+        {
+            return db.Query(cb, query, compiler).ToList();
+        }
+
+        /// <summary>
+        ///     Perform a multi-poco fetch
+        /// </summary>
+        /// <typeparam name="T1">The first POCO type</typeparam>
+        /// <typeparam name="T2">The second POCO type</typeparam>
         /// <typeparam name="T3">The third POCO type</typeparam>
         /// <typeparam name="TRet">The returned list POCO type</typeparam>
         /// <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
@@ -287,6 +339,23 @@ namespace PetaPoco.Extensions
         public static List<TRet> Fetch<T1, T2, T3, TRet>(this IDatabase db, Func<T1, T2, T3, TRet> cb, Query query)
         {
             return db.Query(cb, query).ToList();
+        }
+
+        /// <summary>
+        ///     Perform a multi-poco fetch
+        /// </summary>
+        /// <typeparam name="T1">The first POCO type</typeparam>
+        /// <typeparam name="T2">The second POCO type</typeparam>
+        /// <typeparam name="T3">The third POCO type</typeparam>
+        /// <typeparam name="TRet">The returned list POCO type</typeparam>
+        /// <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
+        /// <param name="compiler"></param>
+        /// <returns>A collection of POCOs as a List</returns>
+        public static List<TRet> Fetch<T1, T2, T3, TRet>(this IDatabase db, Func<T1, T2, T3, TRet> cb, 
+            Query query, Compiler compiler)
+        {
+            return db.Query(cb, query, compiler).ToList();
         }
 
         /// <summary>
@@ -312,6 +381,24 @@ namespace PetaPoco.Extensions
         /// <typeparam name="T2">The second POCO type</typeparam>
         /// <typeparam name="T3">The third POCO type</typeparam>
         /// <typeparam name="T4">The fourth POCO type</typeparam>
+        /// <typeparam name="TRet">The returned list POCO type</typeparam>
+        /// <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
+        /// <param name="compiler"></param>
+        /// <returns>A collection of POCOs as a List</returns>
+        public static List<TRet> Fetch<T1, T2, T3, T4, TRet>(this IDatabase db, Func<T1, T2, T3, T4, TRet> cb, 
+            Query query, Compiler compiler)
+        {
+            return db.Query(cb, query, compiler).ToList();
+        }
+
+        /// <summary>
+        ///     Perform a multi-poco fetch
+        /// </summary>
+        /// <typeparam name="T1">The first POCO type</typeparam>
+        /// <typeparam name="T2">The second POCO type</typeparam>
+        /// <typeparam name="T3">The third POCO type</typeparam>
+        /// <typeparam name="T4">The fourth POCO type</typeparam>
         /// <typeparam name="T5">The fifth POCO type</typeparam>
         /// <typeparam name="TRet">The returned list POCO type</typeparam>
         /// <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
@@ -320,6 +407,25 @@ namespace PetaPoco.Extensions
         public static List<TRet> Fetch<T1, T2, T3, T4, T5, TRet>(this IDatabase db, Func<T1, T2, T3, T4, T5, TRet> cb, Query query)
         {
             return db.Query(cb, query).ToList();
+        }
+
+        /// <summary>
+        ///     Perform a multi-poco fetch
+        /// </summary>
+        /// <typeparam name="T1">The first POCO type</typeparam>
+        /// <typeparam name="T2">The second POCO type</typeparam>
+        /// <typeparam name="T3">The third POCO type</typeparam>
+        /// <typeparam name="T4">The fourth POCO type</typeparam>
+        /// <typeparam name="T5">The fifth POCO type</typeparam>
+        /// <typeparam name="TRet">The returned list POCO type</typeparam>
+        /// <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
+        /// <param name="compiler"
+        /// <returns>A collection of POCOs as a List</returns>
+        public static List<TRet> Fetch<T1, T2, T3, T4, T5, TRet>(this IDatabase db, Func<T1, T2, T3, T4, T5, TRet> cb, 
+            Query query, Compiler compiler)
+        {
+            return db.Query(cb, query, compiler).ToList();
         }
 
         /// <summary>
@@ -346,7 +452,8 @@ namespace PetaPoco.Extensions
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
         /// <param name="compiler"></param>
         /// <returns>A collection of POCOs as an IEnumerable</returns>
-        public static IEnumerable<TRet> Query<T1, T2, TRet>(this IDatabase db, Func<T1, T2, TRet> cb, Query query, Compiler compiler)
+        public static IEnumerable<TRet> Query<T1, T2, TRet>(this IDatabase db, Func<T1, T2, TRet> cb, 
+            Query query, Compiler compiler)
         {
             return db.Query(cb, query.ToSql(compiler));
         }
@@ -376,7 +483,8 @@ namespace PetaPoco.Extensions
         /// <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
         /// <returns>A collection of POCOs as an IEnumerable</returns>
-        public static IEnumerable<TRet> Query<T1, T2, T3, TRet>(this IDatabase db, Func<T1, T2, T3, TRet> cb, Query query, Compiler compiler)
+        public static IEnumerable<TRet> Query<T1, T2, T3, TRet>(this IDatabase db, Func<T1, T2, T3, TRet> cb, 
+            Query query, Compiler compiler)
         {
             return db.Query(cb, query.ToSql(compiler));
         }
@@ -409,7 +517,8 @@ namespace PetaPoco.Extensions
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
         /// <param name="compiler"></param>
         /// <returns>A collection of POCOs as an IEnumerable</returns>
-        public static IEnumerable<TRet> Query<T1, T2, T3, T4, TRet>(this IDatabase db, Func<T1, T2, T3, T4, TRet> cb, Query query, Compiler compiler)
+        public static IEnumerable<TRet> Query<T1, T2, T3, T4, TRet>(this IDatabase db, Func<T1, T2, T3, T4, TRet> cb, 
+            Query query, Compiler compiler)
         {
             return db.Query(cb, query.ToSql(compiler));
         }
@@ -426,7 +535,8 @@ namespace PetaPoco.Extensions
         /// <param name="cb">A callback function to connect the POCO instances, or null to automatically guess the relationships</param>
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
         /// <returns>A collection of POCOs as an IEnumerable</returns>
-        public static IEnumerable<TRet> Query<T1, T2, T3, T4, T5, TRet>(this IDatabase db, Func<T1, T2, T3, T4, T5, TRet> cb, Query query)
+        public static IEnumerable<TRet> Query<T1, T2, T3, T4, T5, TRet>(this IDatabase db, Func<T1, T2, T3, T4, T5, TRet> cb, 
+            Query query)
         {
             return db.Query(cb, query, db.GetCompiler());
         }
@@ -444,7 +554,8 @@ namespace PetaPoco.Extensions
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
         /// <param name="compiler"></param>
         /// <returns>A collection of POCOs as an IEnumerable</returns>
-        public static IEnumerable<TRet> Query<T1, T2, T3, T4, T5, TRet>(this IDatabase db, Func<T1, T2, T3, T4, T5, TRet> cb, Query query, Compiler compiler)
+        public static IEnumerable<TRet> Query<T1, T2, T3, T4, T5, TRet>(this IDatabase db, Func<T1, T2, T3, T4, T5, TRet> cb, 
+            Query query, Compiler compiler)
         {
             return db.Query(cb, query.ToSql(compiler));
         }
@@ -466,12 +577,39 @@ namespace PetaPoco.Extensions
         /// </summary>
         /// <typeparam name="T1">The first POCO type</typeparam>
         /// <typeparam name="T2">The second POCO type</typeparam>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
+        /// <param name="compiler"></param>
+        /// <returns>A collection of POCOs as a List</returns>
+        public static List<T1> Fetch<T1, T2>(this IDatabase db, Query query, Compiler compiler)
+        {
+            return db.Query<T1, T2>(query, compiler).ToList();
+        }
+
+        /// <summary>
+        ///     Perform a multi-poco fetch
+        /// </summary>
+        /// <typeparam name="T1">The first POCO type</typeparam>
+        /// <typeparam name="T2">The second POCO type</typeparam>
         /// <typeparam name="T3">The third POCO type</typeparam>
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
         /// <returns>A collection of POCOs as a List</returns>
         public static List<T1> Fetch<T1, T2, T3>(this IDatabase db, Query query)
         {
             return db.Query<T1, T2, T3>(query).ToList();
+        }
+
+        /// <summary>
+        ///     Perform a multi-poco fetch
+        /// </summary>
+        /// <typeparam name="T1">The first POCO type</typeparam>
+        /// <typeparam name="T2">The second POCO type</typeparam>
+        /// <typeparam name="T3">The third POCO type</typeparam>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
+        /// <param name="compiler"></param>
+        /// <returns>A collection of POCOs as a List</returns>
+        public static List<T1> Fetch<T1, T2, T3>(this IDatabase db, Query query, Compiler compiler)
+        {
+            return db.Query<T1, T2, T3>(query, compiler).ToList();
         }
 
         /// <summary>
@@ -495,12 +633,43 @@ namespace PetaPoco.Extensions
         /// <typeparam name="T2">The second POCO type</typeparam>
         /// <typeparam name="T3">The third POCO type</typeparam>
         /// <typeparam name="T4">The fourth POCO type</typeparam>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
+        /// <param name="compiler"></param>
+        /// <returns>A collection of POCOs as a List</returns>
+        public static List<T1> Fetch<T1, T2, T3, T4>(this IDatabase db, Query query, Compiler compiler)
+        {
+            return db.Query<T1, T2, T3, T4>(query, compiler).ToList();
+        }
+
+        /// <summary>
+        ///     Perform a multi-poco fetch
+        /// </summary>
+        /// <typeparam name="T1">The first POCO type</typeparam>
+        /// <typeparam name="T2">The second POCO type</typeparam>
+        /// <typeparam name="T3">The third POCO type</typeparam>
+        /// <typeparam name="T4">The fourth POCO type</typeparam>
         /// <typeparam name="T5">The fourth POCO type</typeparam>
         /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
         /// <returns>A collection of POCOs as a List</returns>
         public static List<T1> Fetch<T1, T2, T3, T4, T5>(this IDatabase db, Query query)
         {
             return db.Query<T1, T2, T3, T4, T5>(query).ToList();
+        }
+
+        /// <summary>
+        ///     Perform a multi-poco fetch
+        /// </summary>
+        /// <typeparam name="T1">The first POCO type</typeparam>
+        /// <typeparam name="T2">The second POCO type</typeparam>
+        /// <typeparam name="T3">The third POCO type</typeparam>
+        /// <typeparam name="T4">The fourth POCO type</typeparam>
+        /// <typeparam name="T5">The fourth POCO type</typeparam>
+        /// <param name="query">A SqlKata <seealso cref="Query"/> representing the base SQL query and its arguments</param>
+        /// <param name="compiler"></param>
+        /// <returns>A collection of POCOs as a List</returns>
+        public static List<T1> Fetch<T1, T2, T3, T4, T5>(this IDatabase db, Query query, Compiler compiler)
+        {
+            return db.Query<T1, T2, T3, T4, T5>(query, compiler).ToList();
         }
 
         /// <summary>
