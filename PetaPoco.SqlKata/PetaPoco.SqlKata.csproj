@@ -15,7 +15,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageReleaseNotes>Added ability to specify a custom controller.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added ability to specify a custom compiler.</PackageReleaseNotes>
   </PropertyGroup>
   
   <PropertyGroup>
