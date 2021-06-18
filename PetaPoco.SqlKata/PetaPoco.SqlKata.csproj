@@ -15,7 +15,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageIconUrl>https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png</PackageIconUrl>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageReleaseNotes>Requires v2 of SqlKata; the assembly name changed in this version from QueryBuilder.dll to SqlKata.dll.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added ability to specify a custom controller.</PackageReleaseNotes>
   </PropertyGroup>
   
   <PropertyGroup>
