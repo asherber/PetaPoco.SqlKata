@@ -1,13 +1,16 @@
-name: .NET Core
-on: [push]
+name: .NET
+on: [ push, pull_request ]
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build_and_test:
+    runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.100
-    - name: Build with dotnet
-      run: dotnet test -c Release -f netcoreapp3.1
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        run: dotnet build
+        
+      - name: Test
+        run: dotnet test --no-build -v normal
