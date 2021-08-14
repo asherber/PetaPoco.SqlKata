@@ -21,4 +21,12 @@ jobs:
         run: dotnet build
         
       - name: Test
-        run: dotnet test --no-build -v normal
+        run: dotnet test --no-build -v normal --logger trx
+        
+      - name: Publish unit test report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Unit Tests
+          path: '**/*.trx'
+          reporter: dotnet-trx
