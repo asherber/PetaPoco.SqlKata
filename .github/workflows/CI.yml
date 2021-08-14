@@ -1,7 +1,7 @@
 name: CI
 on: [ push, pull_request, workflow_dispatch ]
 jobs:
-  build_and_test:
+  Build:
     runs-on: windows-2016
     steps:
       - name: Checkout
@@ -27,6 +27,6 @@ jobs:
         uses: dorny/test-reporter@v1
         if: success() || failure()
         with:
-          name: Unit Tests
+          name: Unit Test Report
           path: '**/*.trx'
           reporter: dotnet-trx
