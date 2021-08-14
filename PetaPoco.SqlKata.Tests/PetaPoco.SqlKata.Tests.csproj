@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.0;net452</TargetFrameworks>
+    <TargetFrameworks>net8.0;net452</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -20,5 +20,9 @@
   <ItemGroup>
     <ProjectReference Include="..\PetaPoco.SqlKata\PetaPoco.SqlKata.csproj" />
   </ItemGroup>
+  
+  <PropertyGroup>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
 
 </Project>
