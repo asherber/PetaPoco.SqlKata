@@ -1,6 +1,6 @@
 ![Icon](https://raw.githubusercontent.com/asherber/PetaPoco.SqlKata/master/media/database-64.png)
 
-# PetaPoco.SqlKata [![NuGet](https://img.shields.io/nuget/v/PetaPoco.SqlKata.svg)](https://nuget.org/packages/PetaPoco.SqlKata) [![.NET Core](https://github.com/asherber/PetaPoco.SqlKata/actions/workflows/dotnet.yml/badge.svg)](https://nuget.org/packages/PetaPoco.SqlKata)
+# PetaPoco.SqlKata [![NuGet](https://img.shields.io/nuget/v/PetaPoco.SqlKata.svg)](https://nuget.org/packages/PetaPoco.SqlKata) [![CI](https://github.com/asherber/PetaPoco.SqlKata/actions/workflows/CI.yml/badge.svg)](https://nuget.org/packages/PetaPoco.SqlKata)
 
 [PetaPoco](https://github.com/CollaboratingPlatypus/PetaPoco) is a handy micro-ORM, but the SQL builder that comes with it is extremely limited. This library lets you use [SqlKata](https://sqlkata.com) as a replacement query builder.
 

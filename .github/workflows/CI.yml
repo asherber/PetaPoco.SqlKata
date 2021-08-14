@@ -1,0 +1,24 @@
+name: CI
+on: [ push, pull_request, workflow_dispatch ]
+jobs:
+  build_and_test:
+    runs-on: windows-2016
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Restore cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+            
+      - name: Build
+        run: dotnet build
+        
+      - name: Test
+        run: dotnet test --no-build -v normal
